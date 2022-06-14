@@ -15,7 +15,7 @@ class MenuBar(QMainWindow):
 
     def __init__(self):
         super(MenuBar, self).__init__()
-        self.setWindowTitle("Spectral Tools 0.1.beta")
+        self.setWindowTitle("Spectral Tools 1.0")
         self.setWindowIcon(QIcon('icon.ico'))
         self.setParameters()
         if self.settings.screen_width > 3000:
