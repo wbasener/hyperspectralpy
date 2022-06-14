@@ -3,4 +3,4 @@ Python tools with a GUI for visualization and analysis (target detection, PCA, m
 
 Demo on YouTube at: https://youtube.com/playlist?list=PLzUi-TW1M9mrxAZGKlCwsFzHDv4y3030B
 
-![](https://github.com/wbasener/PYSPECTRA/blob/main/Screenshot_PYSPECTRA.png?raw=true)
+![](https://github.com/wbasener/PYSPECTRA/blob/main/spectralAdv/Screenshot_PYSPECTRA.png?raw=true)
