@@ -10,8 +10,6 @@ from . import libraryManager
 from . import materialIdentificationViewer
 from . import spectralContrastViewer
 from . import bhattacharyyaComparison
-from . import LWIRhsicCleanup
-from . import LWIRLOBOsorting
 from . import easterEggSounds
 from . import classification
 from . import classificationViewer
