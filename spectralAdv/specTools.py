@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt 
 import matplotlib
 from mpl_toolkits.mplot3d import Axes3D
@@ -71,6 +72,7 @@ class ROI_struc:
         self.color = [0,0,0]
         self.locs = ''
         self.spectra = ''
+        self.wl = []
         
 class image_struc:
     def __init__(self):
@@ -183,6 +185,8 @@ def is_image_file(im_fname):
         return im_fname, False
 
 def is_library_file(lib_fname):
+    if (len(lib_fname) > 1):
+        lib_fname = lib_fname[0]
     try:
         try:
             print(1)
@@ -766,15 +770,20 @@ def select_library(self,prompt="Choose a library"):
     if fname_library == '':
         return None, ok
 
-    print(fname_library)
+    #fname_library = fname_library[0]
     lib, ok = is_library_file(fname_library)
     print(ok)
     if ok:
         return lib, ok
     else:
-        QMessageBox.warning(self,"File error",
-            "File %s is not a valid spectral library."%(os.path.basename(fname_library)))
-        return None, ok
+        try:
+            QMessageBox.warning(self,"File error",
+                "File %s is not a valid spectral library."%(os.path.basename(fname_library)))
+            return None, ok
+        except:
+            QMessageBox.warning(self,"File error",
+                "File is not a valid spectral library.")
+            return None, ok
 
 def list_multiply(l,x):
     if type(l) is list:
@@ -788,8 +797,32 @@ def find_indices(string_search,string_list):
     indices = list(compress(range(len(string_check)), string_check))
     return indices
 
+def hex_to_rgb(value):
+    value = value.lstrip('#')
+    lv = len(value)
+    return tuple(int(value[i:i + lv // 3], 16) for i in range(0, lv, lv // 3))
 
 def read_roi_file(fname):
+    # read tje file with pandas
+    df = pd.read_csv(fname)
+
+    # parse the ROI file for ROI metadata
+    names = list(np.unique(df['Name'])) # empty list
+    ROIs = {} # empty dictionary
+    for name in names:
+        ROIs[name] = ROI_struc()
+        ROIs[name].name = name
+        df_subset = df.loc[df['Name'] == name]
+        ROIs[name].color = np.asarray(hex_to_rgb(df_subset.iloc[0,1]), dtype=float)
+        ROIs[name].npts = df_subset.shape[0]
+        ROIs[name].locs = df_subset.iloc[:, 2:4].to_numpy()
+        ROIs[name].spectra = df_subset.iloc[:, 4:df_subset.shape[1]].to_numpy()
+        ROIs[name].wl = np.asarray(df_subset.columns.values.tolist()[4:df_subset.shape[1]], dtype=float)
+
+    return True, ROIs
+
+
+def read_roi_asci_file(fname):
 
     # read the ROI ASCII file as text
     with open(fname) as f:

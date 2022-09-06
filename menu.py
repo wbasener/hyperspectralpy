@@ -15,6 +15,10 @@ class MenuBar(QMainWindow):
 
     def __init__(self):
         super(MenuBar, self).__init__()
+        self.setStyleSheet("color: black;"
+            "background-color: LightGrey;"
+            "selection-color: white;"
+            "selection-background-color: rgb(52,73,94);")
         self.setWindowTitle("Spectral Tools 1.0")
         self.setWindowIcon(QIcon('icon.ico'))
         self.setParameters()
@@ -44,7 +48,7 @@ class MenuBar(QMainWindow):
         mfAction.triggered.connect(self.mf_target_detection)
         quacAction = QAction("QUAC Atmospheric Compensation",self)
         quacAction.triggered.connect(self.quac_atmospheric_compensation)
-        classAnalysisAction = QAction("Class Analysis",self)
+        classAnalysisAction = QAction("Machine Learning: Classification",self)
         classAnalysisAction.triggered.connect(self.class_analysis)
 
         libraryManagerAction = QAction("Spectral Library Manager",self)

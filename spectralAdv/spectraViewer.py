@@ -29,7 +29,7 @@ class rescaleSingleSpectrum(QDialog):
 
         # list widget with list of images
         self.table_view = QTableWidget()
-        self.table_view.setSelectionMode(QtGui.QAbstractItemView.SingleSelection)
+        self.table_view.setSelectionMode(QAbstractItemView.SingleSelection)
         nCols = 3
         nRows = 0
         self.table_view.verticalHeader().setDefaultSectionSize(18)
@@ -80,12 +80,12 @@ class rescaleSingleSpectrum(QDialog):
         self.table_view.setRowCount(self.nRows)
         for i in range(self.nRows):
             # create the spectrum label text
-            item = QtGui.QTableWidgetItem(names[i])
+            item = QTableWidgetItem(names[i])
             rgb = self.hex_to_rgb(colors[i])
-            item.setForeground(QtGui.QColor(rgb[0], rgb[1], rgb[2]))
+            item.setForeground(QColor(rgb[0], rgb[1], rgb[2]))
             self.table_view.setItem(i, 2, item)
-            self.table_view.setItem(i, 0, QtGui.QTableWidgetItem(''))
-            self.table_view.setItem(i, 1, QtGui.QTableWidgetItem(''))
+            self.table_view.setItem(i, 0, QTableWidgetItem(''))
+            self.table_view.setItem(i, 1, QTableWidgetItem(''))
 
         # signal for selection changed
         self.table_view.itemSelectionChanged.connect(self.selection_changed)
@@ -115,12 +115,12 @@ class rescaleSingleSpectrum(QDialog):
 
         # remove the current selection, if there is a current selection
         if current_selection != None:
-            self.table_view.setItem(row, current_selection, QtGui.QTableWidgetItem(''))
+            self.table_view.setItem(row, current_selection, QTableWidgetItem(''))
 
         # if the user selection is the current selection we leave it blank,
         # otherwise we select the user selection
         if current_selection != col:
-            self.table_view.setItem(row, col, QtGui.QTableWidgetItem('X'))
+            self.table_view.setItem(row, col, QTableWidgetItem('X'))
 
     def apply(self):
         pixel = np.zeros(0)
@@ -213,7 +213,7 @@ class editDataDlg(QDialog):
 
         # list widget with list of images
         self.table_view = QTableWidget()
-        self.table_view.setSelectionMode(QtGui.QAbstractItemView.SingleSelection)
+        self.table_view.setSelectionMode(QAbstractItemView.SingleSelection)
         nCols = 3
         nRows = 0
         self.table_view.setRowCount(nRows)
@@ -258,13 +258,13 @@ class editDataDlg(QDialog):
             self.table_view.setCellWidget(i, 0, sp)
 
             # plot line color
-            item = QtGui.QTableWidgetItem('  ')
+            item = QTableWidgetItem('  ')
             rgb = self.hex_to_rgb(colors[i])
-            item.setBackground(QtGui.QColor(rgb[0], rgb[1], rgb[2]))
+            item.setBackground(QColor(rgb[0], rgb[1], rgb[2]))
             self.table_view.setItem(i, 1, item)
 
             # create the spectrum label text
-            self.table_view.setItem(i, 2, QtGui.QTableWidgetItem(names[i]))
+            self.table_view.setItem(i, 2, QTableWidgetItem(names[i]))
 
         # signal for selection changed
         self.table_view.cellChanged.connect(self.data_changed)
@@ -275,10 +275,10 @@ class editDataDlg(QDialog):
         row = item.row()
         column = item.column()
         if column == 2:
-            choice = QtGui.QMessageBox.question(self, 'Delete Spectrum',
+            choice = QMessageBox.question(self, 'Delete Spectrum',
                                                 "Delete "+item.text()+"?",
-                                                QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
-            if choice == QtGui.QMessageBox.Yes:
+                                                QMessageBox.Yes | QMessageBox.No)
+            if choice == QMessageBox.Yes:
                 del self.lines[row]
                 self.fill_table()
                 self.data_changed()
@@ -291,11 +291,11 @@ class editDataDlg(QDialog):
         # if this is the color column, initiate color picker
         if column == 1:
             current_color = item.background().color()
-            new_color = QtGui.QColorDialog.getColor(initial = current_color)
+            new_color = QColorDialog.getColor(initial = current_color)
             if new_color.isValid():
-                item = QtGui.QTableWidgetItem('  ')
+                item = QTableWidgetItem('  ')
                 rgb = [new_color.red(),new_color.green(),new_color.blue()]
-                item.setBackground(QtGui.QColor(rgb[0], rgb[1], rgb[2]))
+                item.setBackground(QColor(rgb[0], rgb[1], rgb[2]))
                 self.table_view.setItem(row, 1, item)
             self.table_view.clearSelection()
 
@@ -328,7 +328,7 @@ class copySomeDlg(QDialog):
 
         # list widget with list of images
         self.table_view = QTableWidget()
-        self.table_view.setSelectionMode(QtGui.QAbstractItemView.SingleSelection)
+        self.table_view.setSelectionMode(QAbstractItemView.SingleSelection)
         nCols = 1
         nRows = 0
         self.table_view.setRowCount(nRows)
@@ -365,7 +365,7 @@ class copySomeDlg(QDialog):
             # checkbox to select this spectrum
             chkBoxItem = QTableWidgetItem(names[idx])
             rgb = self.hex_to_rgb(colors[idx])
-            chkBoxItem.setForeground(QtGui.QColor(rgb[0], rgb[1], rgb[2]))
+            chkBoxItem.setForeground(QColor(rgb[0], rgb[1], rgb[2]))
             chkBoxItem.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled )
             chkBoxItem.setCheckState(Qt.Unchecked)
             self.table_view.setItem(idx, 0, chkBoxItem)
@@ -395,7 +395,7 @@ class backgroundRemoval(QDialog):
 
         # list widget with list of images
         self.table_view = QTableWidget()
-        self.table_view.setSelectionMode(QtGui.QAbstractItemView.SingleSelection)
+        self.table_view.setSelectionMode(QAbstractItemView.SingleSelection)
         nCols = 4
         nRows = 0
         self.table_view.setRowCount(nRows)
@@ -443,13 +443,13 @@ class backgroundRemoval(QDialog):
         self.table_view.setRowCount(self.nRows)
         for i in range(self.nRows):
             # create the spectrum label text
-            item = QtGui.QTableWidgetItem(names[i])
+            item = QTableWidgetItem(names[i])
             rgb = self.hex_to_rgb(colors[i])
-            item.setForeground(QtGui.QColor(rgb[0], rgb[1], rgb[2]))
+            item.setForeground(QColor(rgb[0], rgb[1], rgb[2]))
             self.table_view.setItem(i, 3, item)
-            self.table_view.setItem(i, 0, QtGui.QTableWidgetItem(''))
-            self.table_view.setItem(i, 1, QtGui.QTableWidgetItem(''))
-            self.table_view.setItem(i, 2, QtGui.QTableWidgetItem(''))
+            self.table_view.setItem(i, 0, QTableWidgetItem(''))
+            self.table_view.setItem(i, 1, QTableWidgetItem(''))
+            self.table_view.setItem(i, 2, QTableWidgetItem(''))
 
         # signal for selection changed
         self.table_view.itemSelectionChanged.connect(self.selection_changed)
@@ -486,12 +486,12 @@ class backgroundRemoval(QDialog):
 
         # remove the current selection, if there is a current selection
         if current_selection != None:
-            self.table_view.setItem(row, current_selection, QtGui.QTableWidgetItem(''))
+            self.table_view.setItem(row, current_selection, QTableWidgetItem(''))
 
         # if the user selection is the current selection we leave it blank,
         # otherwise we select the user selection
         if current_selection != col:
-            self.table_view.setItem(row, col, QtGui.QTableWidgetItem('X'))
+            self.table_view.setItem(row, col, QTableWidgetItem('X'))
 
     def apply(self):
         pixel = np.zeros(0)
@@ -591,7 +591,7 @@ class specPlot(MyMainWindow):
         super(specPlot, self).__init__(parent)
         self.setWindowTitle("Spectral Viewer")
         self.resized.connect(self.replot_tight)
-        self.setGeometry(850 + offset, 250 + offset, 1400, 750)
+        self.setGeometry(400 + offset, 200 + offset, 800, 450)
         self.settings = settings
         self.spectra_names = []
         self.pasteSpectrumRequestSent = False

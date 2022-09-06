@@ -35,7 +35,7 @@ class progressBar(QDialog):
 
 
 class classAnalysisGUI(QMainWindow):
-    def __init__(self, settings=None, imageDir=None, parent=None):
+    def __init__(self, settings=None, imageDir="", parent=None):
         super(classAnalysisGUI, self).__init__(parent)
         self.setWindowTitle("Class Analysis")
         self.setWindowIcon(QIcon('files_icon.ico'))
@@ -50,11 +50,9 @@ class classAnalysisGUI(QMainWindow):
         quitAction = QAction("Quit",self)
         quitAction.setShortcut("Ctrl+Q")
         quitAction.triggered.connect(self.cancel)
-        openASCIIROIAction = QAction("Open ROI ASCII file",self)
-        openASCIIROIAction.setShortcut("Ctrl+O")
-        openASCIIROIAction.triggered.connect(self.choose_ROI_file)
-        openWavelnengthAction = QAction("Open Image file with Wavelengths",self)
-        openWavelnengthAction.triggered.connect(self.choose_WL_file)
+        openROIAction = QAction("Open ROI csv file",self)
+        openROIAction.setShortcut("Ctrl+O")
+        openROIAction.triggered.connect(self.choose_ROI_file)
 
         plotSelectedMeansAction = QAction("Plot Selected Class Means",self)
         plotSelectedMeansAction.triggered.connect(self.plot_selected_means)
@@ -67,8 +65,6 @@ class classAnalysisGUI(QMainWindow):
         # GUI Widgets
         self.ROIfileText = QLabel()
         self.ROIfileText.setText("No ROI file selected")
-        self.IamgefileText = QLabel()
-        self.IamgefileText.setText("No Image file selected")
 
         # list widget with table of ROIs
         self.table_view = QTableWidget()
@@ -76,12 +72,11 @@ class classAnalysisGUI(QMainWindow):
         self.table_view.setRowCount(0)
         self.table_view.setColumnCount(4)
         self.table_view.setHorizontalHeaderLabels(['Name','Color','Num Points'])
-        self.table_view.setColumnWidth(0, 325) # name
-        self.table_view.setColumnWidth(1, 75) # color
-        self.table_view.setColumnWidth(2, 75) # num pts
+        self.table_view.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
+        self.table_view.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeToContents)
+        self.table_view.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeToContents)
         self.table_view.setColumnWidth(3, 75) # ROI data
         self.table_view.setColumnHidden(3, True)
-        self.table_view.horizontalHeader().setStretchLastSection(True) # stretch last column
         self.table_view.verticalHeader().setAlternatingRowColors(True)
 
         # add a horizontal seperator line
@@ -115,16 +110,14 @@ class classAnalysisGUI(QMainWindow):
         line3.setFrameShadow(QFrame.Sunken)
 
         # OK and Cancel buttons
-        self.buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, Qt.Horizontal, self)
-        self.buttons.accepted.connect(self.full_analysis)
-        self.buttons.rejected.connect(self.cancel)
+        self.btn_analysis = QPushButton("Run Analysis")
+        self.btn_analysis.clicked.connect(self.full_analysis)
 
         # Layout
         self.widget_central = QWidget()
         self.vbox = QVBoxLayout()
         self.widget_central.setLayout(self.vbox)
         self.vbox.addWidget(self.ROIfileText)
-        self.vbox.addWidget(self.IamgefileText)
         self.vbox.addWidget(self.table_view)
 
         self.vbox.addSpacing(5)
@@ -145,7 +138,7 @@ class classAnalysisGUI(QMainWindow):
 
         self.vbox.addSpacing(10)
         self.vbox.addWidget(line3)
-        self.vbox.addWidget(self.buttons)
+        self.vbox.addWidget(self.btn_analysis)
 
         # set as central widget and dock widget
         self.setCentralWidget(self.widget_central)
@@ -153,8 +146,7 @@ class classAnalysisGUI(QMainWindow):
         # Add Menubar
         mainMenu = self.menuBar()
         fileMenu = mainMenu.addMenu("&File ")
-        fileMenu.addAction(openASCIIROIAction)
-        fileMenu.addAction(openWavelnengthAction)
+        fileMenu.addAction(openROIAction)
         fileMenu.addAction(quitAction)
         fileMenu = mainMenu.addMenu("&Plots ")
         fileMenu.addAction(plotSelectedMeansAction)
@@ -186,6 +178,7 @@ class classAnalysisGUI(QMainWindow):
             key = self.table_view.item(rowIdx,3).text()
             spectra = self.ROIdata[key].spectra
             mean = np.mean(spectra,0)
+            std = np.std(spectra,0)
             if len(self.wl) == len(mean):
                 wl = self.wl
             else:
@@ -194,8 +187,8 @@ class classAnalysisGUI(QMainWindow):
                 print('Number Image Bands: '+str(len(self.wl)))
                 wl = range(len(mean))
             ax.plot(wl, mean, label=self.ROIdata[key].name, color=self.ROIdata[key].color/255.)
-
-            ax.set(xlabel='Wavelength',  title='Class Means')
+            ax.fill_between(wl, mean-std, mean+std, alpha=0.2, color=self.ROIdata[key].color/255.)
+            ax.set(xlabel='Wavelength',  title='Class Means +/- 1 Standard Deviation')
         ax.legend()
         plt.show()
 
@@ -220,6 +213,7 @@ class classAnalysisGUI(QMainWindow):
             key = self.table_view.item(rowIdx,3).text()
             spectra = self.ROIdata[key].spectra
             mean = np.mean(spectra,0)
+            std = np.std(spectra,0)
             if len(self.wl) == len(mean):
                 wl = self.wl
             else:
@@ -228,8 +222,8 @@ class classAnalysisGUI(QMainWindow):
                 print('Number Image Bands: '+str(len(self.wl)))
                 wl = range(len(mean))
             ax.plot(wl, mean, label=self.ROIdata[key].name, color=self.ROIdata[key].color/255.)
-
-            ax.set(xlabel='Wavelength',  title='Class Means')
+            ax.fill_between(wl, mean-std, mean+std, alpha=0.2, color=self.ROIdata[key].color/255.)
+            ax.set(xlabel='Wavelength',  title='Class Means +/- 1 Standard Deviation')
         ax.legend()
         plt.show()
 
@@ -256,8 +250,7 @@ class classAnalysisGUI(QMainWindow):
             QStyledItemDelegate.paint(self, painter, option, index)
 
     def choose_ROI_file(self):
-        fname_ROI = QFileDialog.getOpenFileName(self, 'Choose ROI ASCII file.',
-            'C:\\Users\\wfbsm\\OneDrive\\Documents\\My Papers\\Microscene\\Material Seperation\data', "Text files (*.txt)")
+        fname_ROI, extension = QFileDialog.getOpenFileName(self, 'Choose ROI csv file.', self.imageDir+"/", "CSV (*.csv)")
         if fname_ROI == '':
             return
 
@@ -295,6 +288,7 @@ class classAnalysisGUI(QMainWindow):
             ROIkey = QTableWidgetItem(key)
             self.table_view.setItem(idx, 3, ROIkey)
         self.table_view.setItemDelegate(self.ColorDelegate()) # sets the background colors when slected
+        self.wl = self.ROIdata[key].wl
 
     def choose_WL_file(self):
         fname_WL = QFileDialog.getOpenFileName(self, 'Choose Image file with wavelengths.')
@@ -321,11 +315,12 @@ class classAnalysisGUI(QMainWindow):
             self.select_ROIs_message()
             return
         # build the ROI data for the selected rows
+        self.class_names = []
         for rowIdx in selected_rows:
             key = self.table_view.item(rowIdx,3).text()
             name = self.table_view.item(rowIdx,0).text()
+            self.class_names.append(name)
             SelectedROIdata[name] = self.ROIdata[key]
-            SelectedROIdata[name].name = name
 
         # determine which classification methods the user has selected
         methods = []
@@ -337,6 +332,9 @@ class classAnalysisGUI(QMainWindow):
             methods.append('RF')
         # Compute the classificaiton analysis
         self.learners, self.validation = classification.ROI_class_learner(SelectedROIdata, self.wl, methods)
+        self.classAnalysisResultsGUI = classificationResultsViewer.classAnalysisResultsGUI(parent=self, settings=self.settings)
+        self.classAnalysisResultsGUI.show()
+
 
         # determine which plot methods the user has selected
         methods = []
@@ -347,23 +345,23 @@ class classAnalysisGUI(QMainWindow):
         # create the requested plots
         self.plot_data = classification.dimension_reduction_plots(SelectedROIdata, methods)
 
-        self.classificationResultsViewer = classificationResultsViewer.classificationResultsViewer(settings=self.settings,
-                                                                                                   methods=methods,
-                                                                                                   learners=self.learners,
-                                                                                                   validation=self.validation,
-                                                                                                   plot_data=self.plot_data)
+        #self.classificationResultsViewer = classificationResultsViewer.classificationResultsViewer(settings=self.settings,
+        #                                                                                           methods=methods,
+        #                                                                                           learners=self.learners,
+        #                                                                                           validation=self.validation,
+        #                                                                                           plot_data=self.plot_data)
 
     def classify_image(self):
 
         # Select the image
         prompt = 'Select an image'
         if self.imageDir is None:
-            self.im_fname = QFileDialog.getOpenFileName(self, prompt)
+            self.im_fname, extension = QFileDialog.getOpenFileName(self, prompt)
         else:
             try:
-                self.im_fname = QFileDialog.getOpenFileName(self, prompt, self.imageDir)
+                self.im_fname, extension = QFileDialog.getOpenFileName(self, prompt, self.imageDir)
             except:
-                self.im_fname = QFileDialog.getOpenFileName(self, prompt)
+                self.im_fname, extension = QFileDialog.getOpenFileName(self, prompt)
         if self.im_fname == '':
             return
         dummy,ok = specTools.is_image_file(self.im_fname)
@@ -388,7 +386,7 @@ class classAnalysisGUI(QMainWindow):
         # check the bands
         band_check = True
         if nBands == len(self.wl):
-            if not (self.im.bands.centers == self.wl):
+            if not (self.im.bands.centers == self.wl).all():
                 band_check = False
         else:
             band_check = False
@@ -412,6 +410,7 @@ class classAnalysisGUI(QMainWindow):
                                 ext='', force=True)
             except:
                 pass
+
 
 
 if __name__ == "__main__":

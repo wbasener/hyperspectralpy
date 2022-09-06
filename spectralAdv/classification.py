@@ -214,31 +214,12 @@ def dimension_reduction_plots(ROIdata, methods):
                     np.ones((pos.shape[0])) * ROIdata[target_name].color[0],
                     np.ones((pos.shape[0])) * ROIdata[target_name].color[1],
                     np.ones((pos.shape[0])) * ROIdata[target_name].color[2])).T
-                sp2 = gl.GLScatterPlotItem(pos=pos, color=color)
+                sp2 = gl.GLScatterPlotItem(pos=pos, color=color/255.)
 
                 w3d_pca.addItem(sp2)
 
-        # Matplotlib implementation of scatterplot
-        # lw = 2
-        # if plot_dims == 2:
-        #     plt.figure()
-        # else:
-        #     fig = plt.figure()
-        #     ax = fig.add_subplot(111, projection='3d')
-        # for i, target_name in enumerate(target_names):
-        #     if plot_dims==2:
-        #         plt.scatter(X_r[y == i, 0], X_r[y == i, 1], color=ROIdata[target_name].color/255., alpha=.8, lw=lw,
-        #             s=5, label=target_name)
-        #     else:
-        #         ax.scatter(X_r[y == i, 0], X_r[y == i, 1], X_r[y == i, 2], color=ROIdata[target_name].color/255., alpha=.8, lw=lw,
-        #             s=5, label=target_name)
-        # plt.legend(loc='best', shadow=False, scatterpoints=1)
-        # plt.title('First Two PCA Bands')
-
-
-
     if 'LDA' in methods:
-        lda = LinearDiscriminantAnalysis(n_components=len(target_names))
+        lda = LinearDiscriminantAnalysis(n_components=len(target_names)-1)
         X_r2 = lda.fit(X, y).transform(X)
 
         # 2D SCatterplot
@@ -249,7 +230,8 @@ def dimension_reduction_plots(ROIdata, methods):
                 symbolBrush=(ROIdata[target_name].color[0],ROIdata[target_name].color[1],ROIdata[target_name].color[2]))
 
         # 3D SCatterplot
-        if plot_dims > 2:
+        plot_dims_lda = len(target_names) - 1
+        if plot_dims_lda > 2:
             w3d_lda = gl.GLViewWidget()
             w3d_lda.opts['distance'] = np.max(X_r2)
             w3d_lda.show()
