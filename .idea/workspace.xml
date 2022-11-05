@@ -40,7 +40,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
   </component>
-  <component name="RunManager" selected="Python.menu">
+  <component name="RunManager" selected="Python.test1">
     <configuration name="menu" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="PYSPECTRA" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -106,9 +106,9 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.menu" />
         <item itemvalue="Python.test1" />
         <item itemvalue="Python.test" />
+        <item itemvalue="Python.menu" />
       </list>
     </recent_temporary>
   </component>
