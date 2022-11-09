@@ -11,6 +11,7 @@ from PyQt5.QtWidgets import *
 os.chdir(os.getcwd())
 
 class MenuBar(QMainWindow):
+    print(1)
     pasteSpectrum = pyqtSignal(dict)
 
     def __init__(self):
@@ -678,9 +679,10 @@ class MenuBar(QMainWindow):
         self.outputDir = os.path.abspath(outputDir)
         return outputDir, True
 
-
-if __name__ == '__main__':
+print(__name__)
+if __name__ == 'PYSPECTRA.spec.menu':
     #app = QApplication.instance() # when running in Canopy
+    print(0)
     app = QApplication(sys.argv)
     GUI = MenuBar()
     sys.exit(app.exec_())
