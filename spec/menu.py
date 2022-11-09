@@ -678,6 +678,7 @@ class MenuBar(QMainWindow):
         self.outputDir = os.path.abspath(outputDir)
         return outputDir, True
 
+
 if __name__ == '__main__':
     #app = QApplication.instance() # when running in Canopy
     app = QApplication(sys.argv)

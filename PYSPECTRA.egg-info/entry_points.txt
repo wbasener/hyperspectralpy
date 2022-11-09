@@ -1,0 +1,3 @@
+[console_scripts]
+go = spec.menu:MenuBar
+
