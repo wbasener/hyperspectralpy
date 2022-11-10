@@ -1,5 +1,7 @@
-if __name__ == 'PYSPECTRA.spec.menu':
-    print("Starting PYSPECTRA menubar for hyperspectral imag analysis...")
+if __name__ == 'HySpec.spec.menu':
+    print("Starting HySpec menubar for hyperspectral imag analysis...")
+else:
+    print(__name__)
 
 import sys
 import os
@@ -682,7 +684,7 @@ class MenuBar(QMainWindow):
         self.outputDir = os.path.abspath(outputDir)
         return outputDir, True
 
-if __name__ == 'PYSPECTRA.spec.menu':
+if __name__ == 'HySpec.spec.menu':
     #app = QApplication.instance() # when running in Canopy
     app = QApplication(sys.argv)
     GUI = MenuBar()

@@ -1,0 +1,3 @@
+[console_scripts]
+go = HySpec.spec:menu
+

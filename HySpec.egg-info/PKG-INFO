@@ -1,0 +1,21 @@
+Metadata-Version: 2.1
+Name: HySpec
+Version: 0.0.3
+Summary: A GUI-based toolbox for hyperspectral image and library viewing, detection, classification, and identificaiton analysis.
+Home-page: https://github.com/wbasener/HySpec
+Author: Bill Basener
+Author-email: wb8by@virginia.edu
+License: UNKNOWN
+Keywords: hyperspectral
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3
+Description-Content-Type: text/markdown
+Provides-Extra: math
+Provides-Extra: bin
+Provides-Extra: dev
+
+[![DOI](https://zenodo.org/badge/304360097.svg)](https://zenodo.org/badge/latestdoi/304360097) Python tools with a GUI for visualization and analysis (target detection, PCA, material identification, library management) involving multispectral and hyperspectral images.    Demo on YouTube at: https://youtube.com/playlist?list=PLzUi-TW1M9mrxAZGKlCwsFzHDv4y3030B      ![](https://github.com/wbasener/HySpec/blob/main/spectralAdv/Screenshot_HySpec.png?raw=true)
+
