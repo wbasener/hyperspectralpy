@@ -1,27 +1,20 @@
 Metadata-Version: 2.1
 Name: PYSPECTRA
 Version: 1.0
-Summary: UNKNOWN
+Summary: A graphical user interface - base software for hyperspectral image analysis.
 Home-page: https://github.com/wbasener/PYSPECTRA
 Author: Bill Basener
 Author-email: wb8by@virginia.edu
 License: UNKNOWN
 Keywords: hyperspectral
 Platform: UNKNOWN
-Classifier: Development Status :: 3 - Beta
-Classifier: Intended Audience :: Developers
-Classifier: Topic :: Software Development :: Build Tools
-Classifier: Natural Language :: EnglishLicense :: OSI Approved :: MIT License
 Classifier: Programming Language :: Python :: 3
-Classifier: Programming Language :: Python :: 3.6
-Classifier: Programming Language :: Python :: 3.7
-Classifier: Programming Language :: Python :: 3.8
-Classifier: Programming Language :: Python :: 3.9
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
 Requires-Python: >=3
 Provides-Extra: math
 Provides-Extra: bin
 Provides-Extra: dev
-License-File: LICENSE
 
 UNKNOWN
 

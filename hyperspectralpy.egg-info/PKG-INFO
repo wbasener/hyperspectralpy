@@ -1,0 +1,20 @@
+Metadata-Version: 2.1
+Name: hyperspectralpy
+Version: 1.0
+Summary: A GUI-based toolbox for hyperspectral image and library viewing, detection, classification, and identificaiton analysis.
+Home-page: https://github.com/wbasener/PYSPECTRA
+Author: Bill Basener
+Author-email: wb8by@virginia.edu
+License: UNKNOWN
+Keywords: hyperspectral
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3
+Provides-Extra: math
+Provides-Extra: bin
+Provides-Extra: dev
+
+UNKNOWN
+
