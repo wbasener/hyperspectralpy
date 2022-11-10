@@ -1,9 +1,0 @@
-
-[bin]
-returns-decorator
-
-[dev]
-returns-decorator
-
-[math]
-returns-decorator
