@@ -1,6 +1,12 @@
 README.md
 setup.cfg
 setup.py
+HyperspectralPy.egg-info/PKG-INFO
+HyperspectralPy.egg-info/SOURCES.txt
+HyperspectralPy.egg-info/dependency_links.txt
+HyperspectralPy.egg-info/entry_points.txt
+HyperspectralPy.egg-info/requires.txt
+HyperspectralPy.egg-info/top_level.txt
 hyperspectralpy.egg-info/PKG-INFO
 hyperspectralpy.egg-info/SOURCES.txt
 hyperspectralpy.egg-info/dependency_links.txt

@@ -15,11 +15,15 @@ extra_dev = [
 ]
 
 setup(
-    name='hyperspectralpy',
+    name='HyperspectralPy',
+    summary='A GUI-based toolbox for hyperspectral image and library viewing, detection, classification, and identificaiton analysis.',
     description='A GUI-based toolbox for hyperspectral image and library viewing, detection, classification, and identificaiton analysis.',
+    long_description='# HyperspectralPy [![DOI](https://zenodo.org/badge/304360097.svg)](https://zenodo.org/badge/latestdoi/304360097) Python tools with a GUI for visualization and analysis (target detection, PCA, material identification, library management) involving multispectral and hyperspectral images.    <br/><br/>    Demo on YouTube at: https://youtube.com/playlist?list=PLzUi-TW1M9mrxAZGKlCwsFzHDv4y3030B     <br/><br/>   ![](https://github.com/wbasener/PYSPECTRA/blob/main/spectralAdv/Screenshot_PYSPECTRA.png?raw=true)',
+    long_description_content_type='text/markdown',
+
     version=__version__,
 
-    url='https://github.com/wbasener/hyperspectralpy',
+    url='https://github.com/wbasener/HyperspectralPy',
     author='Bill Basener',
     author_email='wb8by@virginia.edu',
 
@@ -45,7 +49,7 @@ setup(
 
     entry_points={
         'console_scripts': [
-            'go=hyperspectralpy.spec:menu',
+            'go=HyperspectralPy.spec:menu',
         ],
     },
 )
