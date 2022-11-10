@@ -1,5 +1,9 @@
+if __name__ == 'PYSPECTRA.spec.menu':
+    print("Starting PYSPECTRA menubar for hyperspectral imag analysis...")
+
 import sys
 import os
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import numpy as np
 import matplotlib.pyplot as plt 
 from spectral import *
@@ -11,7 +15,6 @@ from PyQt5.QtWidgets import *
 os.chdir(os.getcwd())
 
 class MenuBar(QMainWindow):
-    print(1)
     pasteSpectrum = pyqtSignal(dict)
 
     def __init__(self):
@@ -679,10 +682,8 @@ class MenuBar(QMainWindow):
         self.outputDir = os.path.abspath(outputDir)
         return outputDir, True
 
-print(__name__)
 if __name__ == 'PYSPECTRA.spec.menu':
     #app = QApplication.instance() # when running in Canopy
-    print(0)
     app = QApplication(sys.argv)
     GUI = MenuBar()
     sys.exit(app.exec_())

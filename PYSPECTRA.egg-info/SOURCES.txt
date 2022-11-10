@@ -5,6 +5,7 @@ PYSPECTRA.egg-info/PKG-INFO
 PYSPECTRA.egg-info/SOURCES.txt
 PYSPECTRA.egg-info/dependency_links.txt
 PYSPECTRA.egg-info/entry_points.txt
+PYSPECTRA.egg-info/requires.txt
 PYSPECTRA.egg-info/top_level.txt
 spec/__init__.py
 spec/menu.py
