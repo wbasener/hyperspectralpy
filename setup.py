@@ -18,8 +18,9 @@ setup(
     name='HySpec',
     summary='A GUI-based toolbox for hyperspectral image and library viewing, detection, classification, and identificaiton analysis.',
     description='A GUI-based toolbox for hyperspectral image and library viewing, detection, classification, and identificaiton analysis.',
-    long_description='[![DOI](https://zenodo.org/badge/304360097.svg)](https://zenodo.org/badge/latestdoi/304360097) Python tools with a GUI for visualization and analysis (target detection, PCA, material identification, library management) involving multispectral and hyperspectral images.    Demo on YouTube at: https://youtube.com/playlist?list=PLzUi-TW1M9mrxAZGKlCwsFzHDv4y3030B      ![](https://github.com/wbasener/HySpec/blob/main/spectralAdv/Screenshot_HySpec.png?raw=true)',
     long_description_content_type='text/markdown',
+    long_description='[![DOI](https://zenodo.org/badge/304360097.svg)](https://zenodo.org/badge/latestdoi/304360097) Python tools with a GUI for visualization and analysis (target detection, PCA, material identification, library management) involving multispectral and hyperspectral images.  \n  -To run with the GUI do "pip install HySpec" from the command line and then "import HySpec" from Python.  \n  -There is a demo on YouTube at: https://youtube.com/playlist?list=PLzUi-TW1M9mrxAZGKlCwsFzHDv4y3030B      ![](https://github.com/wbasener/HySpec/blob/main/spectralAdv/Screenshot_HySpec.png?raw=true)  \n  NOTE: Dependency checking still in progress.',
+
 
     version=__version__,
 
@@ -50,7 +51,7 @@ setup(
 
     entry_points={
         'console_scripts': [
-            'go=HySpec.spec:menu',
+            'go=HySpec:menu',
         ],
     },
 )

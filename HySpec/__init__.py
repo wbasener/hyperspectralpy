@@ -1,4 +1,4 @@
-__version__ = '0.0.3'
+__version__ = '0.1.4.1'
 
 
 # This moodule imports modules for specTools spectral tools

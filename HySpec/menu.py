@@ -1,9 +1,11 @@
-if __name__ == 'HySpec.spec.menu':
-    print("Starting HySpec menubar for hyperspectral imag analysis...")
-else:
-    print(__name__)
 
 import sys
+if __name__ == 'HySpec.menu':
+    if len(sys.argv) == 1:
+        print("Starting HySpec menubar for hyperspectral image analysis...")
+    else:
+        print(len(sys.argv))
+
 import os
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import numpy as np
@@ -684,8 +686,9 @@ class MenuBar(QMainWindow):
         self.outputDir = os.path.abspath(outputDir)
         return outputDir, True
 
-if __name__ == 'HySpec.spec.menu':
-    #app = QApplication.instance() # when running in Canopy
-    app = QApplication(sys.argv)
-    GUI = MenuBar()
-    sys.exit(app.exec_())
+if __name__ == 'HySpec.menu':
+    if len(sys.argv) == 1:
+        #app = QApplication.instance() # when running in Canopy
+        app = QApplication(sys.argv)
+        GUI = MenuBar()
+        sys.exit(app.exec_())
