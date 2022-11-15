@@ -28,16 +28,41 @@ setup(
     author='Bill Basener',
     author_email='wb8by@virginia.edu',
 
-    #packages=['HySpec'],
     packages=find_packages(),
     
-    extras_require={
-        'math': extra_math,
+    install_requires=[
+        'sys',
+        'os',
+        'numpy',
+        'matplotlib',
+        'spectral',
+        'PyQt5',
+        'h5py',
+        'math',
+        'pyqtgraph',
+        'pickle',
+        'csv',
+        'sys',
+        'sklearn',
+        'scipy',
+        'pygame',
+        'functools',
+        'time',
+        'functools',
+        'copy',
+        'fuzzywuzzy',
+        'operator',
+        'statsmodels',
+        'distutils',
+        'timeit',
+        'PIL',
+    ],
 
-        'bin': extra_bin,
-
-        'dev': extra_dev,
-    },
+    #extras_require={
+    #    'math': extra_math,
+    #    'bin': extra_bin,
+    #    'dev': extra_dev,
+    #},
 
     classifiers = [
         "Programming Language :: Python :: 3",
