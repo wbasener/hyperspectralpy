@@ -19,7 +19,6 @@ spectralAdv/classificationViewer.py
 spectralAdv/discriminantAnalysisTest.py
 spectralAdv/easterEggSounds.py
 spectralAdv/feature_build_plot_temp.py
-spectralAdv/imageViewer - Copy.py
 spectralAdv/imageViewer.py
 spectralAdv/imageViewerDialogs.py
 spectralAdv/imageViewerLinker.py
