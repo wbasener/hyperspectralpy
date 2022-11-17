@@ -1,12 +1,12 @@
 Metadata-Version: 2.1
-Name: HySpec
-Version: 1.0.0.2
+Name: hyperspectralpy
+Version: 1.0.0.13
 Summary: A GUI-based toolbox for hyperspectral image and library viewing, detection, classification, and identificaiton analysis.
-Home-page: https://github.com/wbasener/HySpec
+Home-page: https://github.com/wbasener/hyperspectralpy
 Author: Bill Basener
 Author-email: wb8by@virginia.edu
 License: UNKNOWN
-Keywords: hyperspectral
+Keywords: hyperspectralpy
 Platform: UNKNOWN
 Classifier: Programming Language :: Python :: 3
 Classifier: License :: OSI Approved :: MIT License
@@ -15,8 +15,7 @@ Requires-Python: >=3
 Description-Content-Type: text/markdown
 
 [![DOI](https://zenodo.org/badge/304360097.svg)](https://zenodo.org/badge/latestdoi/304360097) Python tools with a GUI for visualization and analysis (target detection, PCA, material identification, library management) involving multispectral and hyperspectral images.  
-  -User guide at https://github.com/wbasener/HySpec/blob/main/Spectral%20Tools%20User%20Guide.pdf  
-  -To run with the GUI do "pip install HySpec" from the command line and then "import HySpec" from Python.  
-  -There is a demo on YouTube at: https://youtube.com/playlist?list=PLzUi-TW1M9mrxAZGKlCwsFzHDv4y3030B      ![](https://github.com/wbasener/HySpec/blob/main/spectralAdv/Screenshot_HySpec.png?raw=true)  
-  NOTE: Dependency checking still in progress.
+  -User guide at https://github.com/wbasener/hyperspectralpy/blob/main/Spectral%20Tools%20User%20Guide.pdf  
+  -To run with the GUI do "pip install hyperspectralpy" from the command line and then "import hyperspectralpy" from Python.  
+  -There is a demo on YouTube at: https://youtube.com/playlist?list=PLzUi-TW1M9mrxAZGKlCwsFzHDv4y3030B      ![](https://github.com/wbasener/hyperspectralpy/blob/main/spectralAdv/Screenshot_HySpec.png?raw=true)
 
