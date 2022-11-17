@@ -1,2 +1,2 @@
-HySpec
+hyperspectral
 spectralAdv

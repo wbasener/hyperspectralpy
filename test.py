@@ -1,1 +1,1 @@
-import HySpec
+import hyperspectral

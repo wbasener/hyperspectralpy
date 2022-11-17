@@ -1,8 +1,8 @@
 
 import sys
-if __name__ == 'HySpec.menu':
+if __name__ == 'hyperspectral.menu':
     if len(sys.argv) == 1:
-        print("Starting HySpec menubar for hyperspectral image analysis...")
+        print("Starting hyperspectral menubar for hyperspectral image analysis...")
     else:
         print(len(sys.argv))
 
@@ -686,7 +686,7 @@ class MenuBar(QMainWindow):
         self.outputDir = os.path.abspath(outputDir)
         return outputDir, True
 
-if __name__ == 'HySpec.menu':
+if __name__ == 'hyperspectral.menu':
     if len(sys.argv) == 1:
         #app = QApplication.instance() # when running in Canopy
         app = QApplication(sys.argv)

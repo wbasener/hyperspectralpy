@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: HySpec
-Version: 0.1.4.4
+Version: 1.0.0.2
 Summary: A GUI-based toolbox for hyperspectral image and library viewing, detection, classification, and identificaiton analysis.
 Home-page: https://github.com/wbasener/HySpec
 Author: Bill Basener

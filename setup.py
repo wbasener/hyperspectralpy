@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-from HySpec import __version__
+from hyperspectral import __version__
 
 extra_math = [
     'returns-decorator',
@@ -76,7 +76,7 @@ setup(
 
     entry_points={
         'console_scripts': [
-            'go=HySpec:menu',
+            'go=hyperspectral:menu',
         ],
     },
 )

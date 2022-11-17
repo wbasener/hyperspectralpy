@@ -1,14 +1,14 @@
 README.md
 setup.cfg
 setup.py
-HySpec/__init__.py
-HySpec/menu.py
 HySpec.egg-info/PKG-INFO
 HySpec.egg-info/SOURCES.txt
 HySpec.egg-info/dependency_links.txt
 HySpec.egg-info/entry_points.txt
 HySpec.egg-info/requires.txt
 HySpec.egg-info/top_level.txt
+hyperspectral/__init__.py
+hyperspectral/menu.py
 spectralAdv/__init__.py
 spectralAdv/atmosphericConversions.py
 spectralAdv/atmosphericConversionsGUI.py
@@ -19,6 +19,7 @@ spectralAdv/classificationViewer.py
 spectralAdv/discriminantAnalysisTest.py
 spectralAdv/easterEggSounds.py
 spectralAdv/feature_build_plot_temp.py
+spectralAdv/imageViewer - Copy.py
 spectralAdv/imageViewer.py
 spectralAdv/imageViewerDialogs.py
 spectralAdv/imageViewerLinker.py
