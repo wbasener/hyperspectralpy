@@ -392,6 +392,12 @@ class imageViewer(QMainWindow):
                     self.im_fname,ok = QFileDialog.getOpenFileName(self, "Choose an image")
             if not ok:
                 return
+
+        # if image is a tif
+        i
+
+
+        # Try opening the image (if ENVI)
         try:
             self.im = envi.open(self.im_fname+'.hdr')
         except:

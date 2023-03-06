@@ -38,6 +38,9 @@ class MenuBar(QMainWindow):
         openImageAction = QAction("Open Image",self)
         openImageAction.setShortcut("Ctrl+O")
         openImageAction.triggered.connect(self.open_image)
+        openTiffImageAction = QAction("Open Tiff Image",self)
+        openTiffImageAction.setShortcut("Ctrl+T")
+        openTiffImageAction.triggered.connect(self.open_tiff_image)
         openLibraryAction = QAction("Open Library",self)
         openLibraryAction.setShortcut("Ctrl+L")
         openLibraryAction.triggered.connect(self.open_library)
@@ -80,6 +83,7 @@ class MenuBar(QMainWindow):
         mainMenu = self.menuBar()
         fileMenu = mainMenu.addMenu("&File ")
         fileMenu.addAction(openImageAction)
+        fileMenu.addAction(openTiffImageAction)
         fileMenu.addAction(openLibraryAction)
         fileMenu.addAction(changeSettingsAction)
         fileMenu.addAction(quitAction)
@@ -161,7 +165,25 @@ class MenuBar(QMainWindow):
 
         # emit the signal to send data back
         self.pasteSpectrum.emit(self.copied_spectrum)
-        
+
+    def open_tiff_image(self):
+        try:
+            easterEggSounds.play(self.sounds,'open_image')
+        except:
+            pass
+
+        im_fname,ok = self.select_tiff_image()
+        if ok:
+            new_key = specTools.get_next_image_viewer_key(self.imageViewerDict.keys())
+            self.imageViewerDict[new_key] = imageViewer.imageViewer(parent=self, key = new_key, settings=self.settings, sounds = self.sounds, im_fname=im_fname)
+            self.imageViewerDict[new_key].viewerClosed.connect(self.imvClosed)
+            self.imageViewerDict[new_key].linkViewers.connect(self.linkImageViewers)
+            self.imageViewerDict[new_key].requestLinkedPixmap.connect(self.requestLinkedPixmap)
+            self.imageViewerDict[new_key].viewerParametersChanged.connect(self.updateLinkedViewerParameters)
+            self.imageViewerDict[new_key].copiedSpectrum.connect(self.copy_spectrum)
+            self.imageViewerDict[new_key].pasteSpectrumRequest.connect(self.paste_spectrum_request)
+            self.pasteSpectrum.connect(self.imageViewerDict[new_key].paste_spectrum)
+            self.imageViewerDict[new_key].show()
     def open_image(self):
         try:
             easterEggSounds.play(self.sounds,'open_image')
@@ -608,6 +630,28 @@ class MenuBar(QMainWindow):
         else:
             QMessageBox.warning(self,"File is not valid ENVI image",
                 "File Name: %s"%(os.path.basename(fname_image)))
+            return fname_image, False
+
+    def select_tiff_image(self, prompt="Choose a tiff image"):
+        if self.imageDir is None:
+            fname_image = QFileDialog.getOpenFileName(self, prompt)
+            fname_image = fname_image[0]
+        else:
+            try:
+                fname_image = QFileDialog.getOpenFileName(self, prompt, self.imageDir)
+                fname_image = fname_image[0]
+            except:
+                fname_image = QFileDialog.getOpenFileName(self, prompt)
+                fname_image = fname_image[0]
+        if fname_image == '':
+            return fname_image, False
+        fname_image, ok = specTools.is_tiff_image_file(fname_image)
+        if ok:
+            self.imageDir = os.path.dirname(os.path.abspath(fname_image))
+            return fname_image, True
+        else:
+            QMessageBox.warning(self, "File is not valid tif or tiff image",
+                                "File Name: %s" % (os.path.basename(fname_image)))
             return fname_image, False
         
     def select_images(self,prompt="Choose one or more images"):  

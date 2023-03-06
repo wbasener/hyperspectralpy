@@ -9,6 +9,9 @@ import matplotlib.pyplot as plt
 #matplotlib.use('Qt4Agg')
 from spectral import *
 from spectralAdv import *
+import rasterio as rio
+import rasterio
+from rasterio.plot import show
 from . import specTools
 from . import spectraViewer
 from . import imageViewerDialogs
@@ -101,12 +104,15 @@ class imageViewer(QMainWindow):
         self.im_arr = im_arr
         self.im_list = None
         self.image_type = None
-        self.stretch = {'type': 's2pct', 'min': [0,0,0], 'max': [1,1,1]}
+        self.stretch = {'type': 's2pct', 'type_prev': '',
+                        'min': [0,0,0], 'min_prev': [-1,-1,-1],
+                        'max': [1,1,1],  'max_prev': [-1,-1,-1]}
         self.scale = 1
         self.spectral_plot_offset = 200
         self.mouse_event = mouse_event_struc()
         self.pixmapIndex = 0
         self.crosshairState = False
+        self.ignoreBlackRegions = True
         self.lastVerticalScrollbarPos = 0
         self.lastHorizontalScrollbarPos = 0
         # variables for ROIs
@@ -177,6 +183,8 @@ class imageViewer(QMainWindow):
         self.rb_stretch_group=QButtonGroup()
         self.rb_stretch_2pct=QRadioButton("2%")
         self.rb_stretch_group.addButton(self.rb_stretch_2pct)
+        self.rb_stretch_2pct_dark=QRadioButton("2%-100%")
+        self.rb_stretch_group.addButton(self.rb_stretch_2pct_dark)
         self.rb_stretch_01=QRadioButton("0-1")
         self.rb_stretch_group.addButton(self.rb_stretch_01)
         self.rb_stretch_range=QRadioButton("range")
@@ -298,7 +306,7 @@ class imageViewer(QMainWindow):
         self.ROI_table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeToContents)
         self.ROI_table.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeToContents)
         self.ROI_table.setStyleSheet("background-color: LightGrey;")
-        self.ROI_table.setMaximumWidth(300)
+        self.ROI_table.setMaximumWidth(600)
         # create variable to hold polygons
         self.polygon = QPolygonF()
         self.polygon_points = []
@@ -320,6 +328,7 @@ class imageViewer(QMainWindow):
         self.btn_plus.clicked.connect(self.actionZoomInFromButton)
         self.btn_minus.clicked.connect(self.actionZoomOutFromButton)
         self.rb_stretch_2pct.clicked.connect(self.update_image_2pct)
+        self.rb_stretch_2pct_dark.clicked.connect(self.update_image_2pct_dark)
         self.rb_stretch_01.clicked.connect(self.update_image_01)
         self.rb_stretch_range.clicked.connect(self.update_image_range)
         self.btn_ROIs.clicked.connect(self.actionCollectROIs)
@@ -343,6 +352,7 @@ class imageViewer(QMainWindow):
         self.hbox.addWidget(self.btn_minus)
         self.hbox.addWidget(self.label_stretch)
         self.hbox.addWidget(self.rb_stretch_2pct)
+        self.hbox.addWidget(self.rb_stretch_2pct_dark)
         self.hbox.addWidget(self.rb_stretch_01)
         self.hbox.addWidget(self.rb_stretch_range)
         self.hbox.addWidget(self.btn_ROIs)
@@ -394,7 +404,7 @@ class imageViewer(QMainWindow):
         self.vbox_disp_type.addWidget(self.label_disp_type)
         self.vbox_disp_type.addLayout(self.hbox_disp_type)
         fm = self.label_disp_type.fontMetrics()
-        w_vbox_disp_type = 1.5*fm.width('X_Pan_X_RGB')
+        w_vbox_disp_type = int(1.5*fm.width('X_Pan_X_RGB'))
         self.widget_vbox_disp_type.setMaximumWidth(w_vbox_disp_type)
 
         # grid layout for toggle_linked_image_btn
@@ -403,7 +413,7 @@ class imageViewer(QMainWindow):
         self.widget_toggle_linked_image_btn.setLayout(self.vbox_toggle_linked_image_btn)
         self.vbox_toggle_linked_image_btn.addWidget(self.toggle_linked_image_btn)
         fm = self.label_cursor_val_disp_red.fontMetrics()
-        w = 1.4*fm.width('Linked Image')
+        w = int(1.4*fm.width('Linked Image'))
         self.widget_toggle_linked_image_btn.setMaximumWidth(w)
         self.widget_toggle_linked_image_btn.setVisible(False)
         
@@ -427,7 +437,7 @@ class imageViewer(QMainWindow):
         self.vbox_ROIs.addWidget(self.ROI_table)
         self.box_ROIs_frame.setLayout(self.vbox_ROIs)
         self.hbox_center.addWidget(self.box_ROIs_frame)
-        self.box_ROIs_frame.setMaximumWidth(300)
+        self.box_ROIs_frame.setMaximumWidth(600)
         self.box_ROIs_frame.hide()
         
         # vbox for image and hbox
@@ -528,24 +538,57 @@ class imageViewer(QMainWindow):
                     self.im_fname,ok = QFileDialog.getOpenFileName(self, "Choose an image")
             if not ok:
                 return
-        try:
-            self.im = envi.open(self.im_fname+'.hdr')
-        except:
-            # sometimes images are saved with ".img" or similar suffix that must be removed from header
-            im_fname_nosuffix = self.im_fname[:self.im_fname.rfind(".")]
-            self.im = envi.open(im_fname_nosuffix+'.hdr', self.im_fname)
+        # if image is a tif"
+        if (os.path.splitext(self.im_fname)[-1]=='.tif') or (os.path.splitext(self.im_fname)[-1]=='.tiff'):
+            self.im = rasterio.open(self.im_fname)
+            self.im_dirname = os.path.dirname(self.im_fname)
+            self.setWindowTitle("[%d] Image Viewer: %s" % (self.key, os.path.basename(self.im_fname)))
 
-        self.im_dirname = os.path.dirname(self.im_fname)
-        self.setWindowTitle("[%d] Image Viewer: %s" % (self.key, os.path.basename(self.im_fname)))
-        self.im = specTools.apply_bbl(self.im)
-        self.im_arr = specTools.envi_load(self.im)
-        [nrows,ncols,nbands] = np.shape(self.im_arr)
-        
-        # determine some of the metadata
-        self.units = self.im.bands.band_unit
-        if self.units is None:
-            self.units =' '  
-        self.wl = self.im.bands.centers  
+            im_arr_temp = self.im.read()
+            [nbands,nrows,ncols] = np.shape(im_arr_temp)
+            self.im_arr = np.zeros((nrows,ncols,nbands))
+            if (nbands == 3): # bands are in reverse wavelength order - RGB for viewing
+                self.im_arr[:,:,0] = im_arr_temp[2,:,:]
+                self.im_arr[:,:,1] = im_arr_temp[1,:,:]
+                self.im_arr[:,:,2] = im_arr_temp[0,:,:]
+            else:
+                for i in range(nbands):
+                    self.im_arr[:,:,i] = im_arr_temp[i,:,:]
+            self.im.nrows = nrows
+            self.im.ncols = ncols
+            self.im.nbands = nbands
+            self.wl = self.im.descriptions
+            self.units = 'nm'
+            if (self.im.count == 3):
+                self.wl = [450,550,650]
+            if (self.im.count == 4):
+                self.wl = [450,550,650,750]
+            if (self.im.count == 8):
+                self.wl = [440,490,530,565,610,670,705,865]
+
+
+        # otherwise - this should be a ENVI file:
+        else:
+            try:
+                self.im = envi.open(self.im_fname+'.hdr')
+            except:
+                # sometimes images are saved with ".img" or similar suffix that must be removed from header
+                im_fname_nosuffix = self.im_fname[:self.im_fname.rfind(".")]
+                self.im = envi.open(im_fname_nosuffix+'.hdr', self.im_fname)
+
+            self.im_dirname = os.path.dirname(self.im_fname)
+            self.setWindowTitle("[%d] Image Viewer: %s" % (self.key, os.path.basename(self.im_fname)))
+            self.im = specTools.apply_bbl(self.im)
+            self.im_arr = specTools.envi_load(self.im)
+            [nrows,ncols,nbands] = np.shape(self.im_arr)
+
+            # determine some of the metadata
+            self.units = self.im.bands.band_unit
+            if self.units is None:
+                self.units =' '
+            self.wl = self.im.bands.centers
+
+
         self.image_type = 'spectral'
         self.rb_disp_type_rgb.setChecked(True)
         self.rb_stretch_2pct.setChecked(True)
@@ -592,6 +635,10 @@ class imageViewer(QMainWindow):
         
     def update_image_2pct(self):
         self.stretch['type'] = 's2pct'
+        self.update_image()
+
+    def update_image_2pct_dark(self):
+        self.stretch['type'] = 's2pctDrk'
         self.update_image()
         
     def update_image_01(self):
@@ -646,7 +693,7 @@ class imageViewer(QMainWindow):
         totalBytes = self.rgb_arr.size * self.rgb_arr.itemsize
         bytesPerLine = int(totalBytes/nRows)
         self.qi = QImage(self.rgb_arr.data, nCols, nRows, bytesPerLine, QImage.Format_RGB888)
-        self.pm = QPixmap.fromImage(self.qi).scaled(self.scale*self.rgb_arr.shape[1], self.scale*self.rgb_arr.shape[0])
+        self.pm = QPixmap.fromImage(self.qi).scaled(int(self.scale*self.rgb_arr.shape[1]), int(self.scale*self.rgb_arr.shape[0]))
         self.imageLabel.setPixmap(self.pm)
         self.scrollImage.setWidget(self.imageLabel)
         self.scrollImage.verticalScrollBar().setValue(yOffset)
@@ -684,19 +731,19 @@ class imageViewer(QMainWindow):
             self.corsshairX_qi = int(floor(x / self.scale))
             self.corsshairY_qi = int(floor(y / self.scale))
             # these are the x,y - coords in pixel space in the QPixmap
-            self.corsshairX_pm = (self.corsshairX_qi+0.5)*self.scale
-            self.corsshairY_pm = (self.corsshairY_qi+0.5)*self.scale
-            top_left_x = self.corsshairX_pm - 0.5*self.scale
-            top_left_y = self.corsshairY_pm - 0.5*self.scale
+            self.corsshairX_pm = int((self.corsshairX_qi+0.5)*self.scale)
+            self.corsshairY_pm = int((self.corsshairY_qi+0.5)*self.scale)
+            top_left_x = int(self.corsshairX_pm - 0.5*self.scale)
+            top_left_y = int(self.corsshairY_pm - 0.5*self.scale)
 
             # paint the crosshair:
-            self.pm = QPixmap.fromImage(self.qi).scaled(self.scale*self.rgb_arr.shape[1], self.scale*self.rgb_arr.shape[0])
+            self.pm = QPixmap.fromImage(self.qi).scaled(int(self.scale*self.rgb_arr.shape[1]), int(self.scale*self.rgb_arr.shape[0]))
             painter = QPainter()
             painter.begin(self.pm)
             painter.setPen(QPen(QColor(255, 0, 0)))
-            painter.drawLine(self.corsshairX_pm, 0, self.corsshairX_pm, self.im.nrows*self.scale)
-            painter.drawLine(0, self.corsshairY_pm, self.im.ncols*self.scale, self.corsshairY_pm)
-            painter.drawRect(top_left_x, top_left_y, self.scale, self.scale)
+            painter.drawLine(self.corsshairX_pm, 0, self.corsshairX_pm, int(self.im.nrows*self.scale))
+            painter.drawLine(0, self.corsshairY_pm, int(self.im.ncols*self.scale), self.corsshairY_pm)
+            painter.drawRect(top_left_x, top_left_y, int(self.scale), int(self.scale))
             self.imageLabel.setPixmap(self.pm)
             painter.end()
 
@@ -706,7 +753,7 @@ class imageViewer(QMainWindow):
         if self.crosshairState == True:
             deltaX = self.corsshair_xOffset - self.scrollImage.horizontalScrollBar().value()
             deltaY = self.corsshair_yOffset - self.scrollImage.verticalScrollBar().value()
-            self.pm = QPixmap.fromImage(self.qi).scaled(self.scale*self.rgb_arr.shape[1], self.scale*self.rgb_arr.shape[0])
+            self.pm = QPixmap.fromImage(self.qi).scaled(int(self.scale*self.rgb_arr.shape[1]), int(self.scale*self.rgb_arr.shape[0]))
             painter = QPainter()
             painter.begin(self.pm)
             painter.setPen(QPen(QColor(255, 0, 0)))
@@ -715,7 +762,7 @@ class imageViewer(QMainWindow):
             self.imageLabel.setPixmap(self.pm)
             painter.end()
         else:
-            self.pm = QPixmap.fromImage(self.qi).scaled(self.scale*self.rgb_arr.shape[1], self.scale*self.rgb_arr.shape[0])
+            self.pm = QPixmap.fromImage(self.qi).scaled(int(self.scale*self.rgb_arr.shape[1]), int(self.scale*self.rgb_arr.shape[0]))
             self.imageLabel.setPixmap(self.pm)
 
     def mouseMove(self, event):
@@ -735,7 +782,7 @@ class imageViewer(QMainWindow):
             self.scrollImage.horizontalScrollBar().setValue(xOffset + deltaX)
             self.scrollImage.verticalScrollBar().setValue(yOffset + deltaY)
             self.mouse_event.moved = self.mouse_event.moved + np.sqrt(deltaX**2 + deltaY**2)
-            self.pm = QPixmap.fromImage(self.qi).scaled(self.scale*self.rgb_arr.shape[1], self.scale*self.rgb_arr.shape[0])
+            self.pm = QPixmap.fromImage(self.qi).scaled(int(self.scale*self.rgb_arr.shape[1]), int(self.scale*self.rgb_arr.shape[0]))
             self.imageLabel.setPixmap(self.pm)
             # emit signal so that linked imageViewers can update their view parameters
             self.viewerParametersChanged.emit(self.key)
@@ -848,6 +895,7 @@ class imageViewer(QMainWindow):
                     # This is the case if not spectral plot has been made
                     self.spectral_plot = spectraViewer.specPlot(parent=self, settings=self.settings, x=x, y=y,
                         wl=self.wl,
+                        marker='o',
                         vals=self.im_arr[y,x,:].flatten(),
                         offset=self.spectral_plot_offset,
                         image_type=self.image_type)
@@ -861,6 +909,7 @@ class imageViewer(QMainWindow):
                     # This is the case if a spectral plot was made and then closed
                     self.spectral_plot = spectraViewer.specPlot(parent=self, settings=self.settings, x=x, y=y,
                         wl=self.wl,
+                        marker='o',
                         vals=self.im_arr[y,x,:].flatten(),
                         offset=self.spectral_plot_offset,
                         image_type=self.image_type)
@@ -872,7 +921,7 @@ class imageViewer(QMainWindow):
                 else:
                     # This is the case if a spectral plot is made and still open
                     # generate the plot
-                    self.spectral_plot.subplot.plot(self.wl,self.im_arr[y,x,:].flatten(), label='row: '+str(y)+', col: '+str(x), linewidth=1)
+                    self.spectral_plot.subplot.plot(self.wl,self.im_arr[y,x,:].flatten(), label='row: '+str(y)+', col: '+str(x), marker='o', linewidth=1)
                     self.spectral_plot.addGainOffset('row: '+str(y)+', col: '+str(x))
                     if self.settings.screen_width > 3000:
                         self.spectral_plot.subplot.axes.legend(fontsize=20)
@@ -1052,7 +1101,7 @@ class imageViewer(QMainWindow):
         # create the rgb image
         self.imageLabel = QLabel()
         self.imageLabel.setMouseTracking(True)
-        self.pm = QPixmap.fromImage(self.qi).scaled(self.scale*self.rgb_arr.shape[1], self.scale*self.rgb_arr.shape[0])
+        self.pm = QPixmap.fromImage(self.qi).scaled(int(self.scale*self.rgb_arr.shape[1]), int(self.scale*self.rgb_arr.shape[0]))
         self.imageLabel.setPixmap(self.pm)
         self.imageLabel.mouseReleaseEvent  = self.plotSpectrum
         self.imageLabel.mousePressEvent = self.mousePress
@@ -1069,7 +1118,7 @@ class imageViewer(QMainWindow):
             # create the rgb image
             self.imageLabel = QLabel()
             self.imageLabel.setMouseTracking(True)
-            self.pm = QPixmap.fromImage(self.qi).scaled(self.scale*self.rgb_arr.shape[1], self.scale*self.rgb_arr.shape[0])
+            self.pm = QPixmap.fromImage(self.qi).scaled(int(self.scale*self.rgb_arr.shape[1]), int(self.scale*self.rgb_arr.shape[0]))
             self.imageLabel.setPixmap(self.pm)
             self.imageLabel.mouseReleaseEvent  = self.plotSpectrum
             self.imageLabel.mousePressEvent = self.mousePress
@@ -1085,7 +1134,7 @@ class imageViewer(QMainWindow):
         # create the rgb image
         self.imageLabel = QLabel()
         self.imageLabel.setMouseTracking(True)
-        self.pm = QPixmap.fromImage(self.qi).scaled(self.scale*self.rgb_arr.shape[1], self.scale*self.rgb_arr.shape[0])
+        self.pm = QPixmap.fromImage(self.qi).scaled(int(self.scale*self.rgb_arr.shape[1]), int(self.scale*self.rgb_arr.shape[0]))
         self.imageLabel.setPixmap(self.pm)
         self.imageLabel.mouseReleaseEvent  = self.plotSpectrum
         self.imageLabel.mousePressEvent = self.mousePress
@@ -1104,7 +1153,7 @@ class imageViewer(QMainWindow):
             # create the rgb image
             self.imageLabel = QLabel()
             self.imageLabel.setMouseTracking(True)
-            self.pm = QPixmap.fromImage(self.qi).scaled(self.scale*self.rgb_arr.shape[1], self.scale*self.rgb_arr.shape[0])
+            self.pm = QPixmap.fromImage(self.qi).scaled(int(self.scale*self.rgb_arr.shape[1]), int(self.scale*self.rgb_arr.shape[0]))
             self.imageLabel.setPixmap(self.pm)
             self.imageLabel.mouseReleaseEvent  = self.plotSpectrum
             self.imageLabel.mousePressEvent = self.mousePress
@@ -1129,7 +1178,7 @@ class imageViewer(QMainWindow):
     def scrollBarChanged(self):
         # Remove crossharis if present
         if self.crosshairState == True:
-            self.pm = QPixmap.fromImage(self.qi).scaled(self.scale*self.rgb_arr.shape[1], self.scale*self.rgb_arr.shape[0])
+            self.pm = QPixmap.fromImage(self.qi).scaled(int(self.scale*self.rgb_arr.shape[1]), int(self.scale*self.rgb_arr.shape[0]))
             self.imageLabel.setPixmap(self.pm)
             self.crosshairState = False
         self.viewerParametersChanged.emit(self.key)
@@ -1148,7 +1197,7 @@ class imageViewer(QMainWindow):
             totalBytes = self.rgb_arr.size * self.rgb_arr.itemsize
             bytesPerLine = int(totalBytes/nRows)
             self.qi = QImage(self.rgb_arr.data, nCols, nRows, bytesPerLine, QImage.Format_RGB888)
-            self.pm = QPixmap.fromImage(self.qi).scaled(self.scale*self.rgb_arr.shape[1], self.scale*self.rgb_arr.shape[0])
+            self.pm = QPixmap.fromImage(self.qi).scaled(int(self.scale*self.rgb_arr.shape[1]), int(self.scale*self.rgb_arr.shape[0]))
             self.imageLabel.setPixmap(self.pm)
             self.scrollImage.setWidget(self.imageLabel)
             self.imageLabel.mouseReleaseEvent = self.plotSpectrum
@@ -1280,7 +1329,23 @@ class imageViewer(QMainWindow):
         return self.pm
 
     def compute_image_array(self, nb):
-        [nrows, ncols, nbands] = np.shape(self.im)
+        # only recompute the image if we need to (speed.memory optimization)
+        recomputeImage = False
+        if (self.stretch['type_prev'] != self.stretch['type']):
+            self.stretch['type_prev'] = self.stretch['type']
+            recomputeImage = True
+        if (self.stretch['type'] == 'slinear'):
+            for band_idx in range(3):
+                if (self.stretch['min'][band_idx] != self.stretch['min_prev'][band_idx]):
+                    self.stretch['min_prev'][band_idx] = self.stretch['min'][band_idx]
+                    recomputeImage = True
+                if (self.stretch['max'][band_idx] != self.stretch['max_prev'][band_idx]):
+                    self.stretch['max_prev'][band_idx] = self.stretch['max'][band_idx]
+                    recomputeImage = True
+
+        nrows = self.im.nrows
+        ncols = self.im.ncols
+        nbands = self.im.nbands
         max_val = 255.
         min_val = 0.
         if nb == 3:
@@ -1293,20 +1358,47 @@ class imageViewer(QMainWindow):
             rgbArray[..., 0] = np.reshape(self.im_arr[:, :, int(self.panBand)], [nrows, ncols])
             rgbArray[..., 1] = np.reshape(self.im_arr[:, :, int(self.panBand)], [nrows, ncols])
             rgbArray[..., 2] = np.reshape(self.im_arr[:, :, int(self.panBand)], [nrows, ncols])
+        # Create a mask to not use black pixels in the stretch computation
+        ImagePixelMax = np.max(rgbArray, axis=2)
+        unmaskedPixels = np.where(ImagePixelMax[:, :] > 0)
+        # Do not mask black pixels if all pixels are black
+        # - This is an odd case, but we would just display a fully black image, not cause error
+        if (len(unmaskedPixels[0])==0):
+            self.ignoreBlackRegions = False
         for band_idx in range(3):
             # stretch band
-            if self.stretch['type'] == 's2pct':
-                bottom = np.percentile(rgbArray[:, :, band_idx], 2)
-                top = np.percentile(rgbArray[:, :, band_idx], 99)
-            elif self.stretch['type'] == 'srange':
-                bottom = np.min(rgbArray[:, :, band_idx])
-                top = np.max(rgbArray[:, :, band_idx])
-            elif self.stretch['type'] == 'slinear':
-                bottom = self.stretch['min'][band_idx]
-                top = self.stretch['max'][band_idx]
+            if self.ignoreBlackRegions:
+                if self.stretch['type'] == 's2pct':
+                    bottom = np.percentile(rgbArray[unmaskedPixels[0], unmaskedPixels[1], band_idx], 2)
+                    top = np.percentile(rgbArray[unmaskedPixels[0], unmaskedPixels[1], band_idx], 99)
+                elif self.stretch['type'] == 's2pctDrk':
+                    bottom = np.percentile(rgbArray[unmaskedPixels[0], unmaskedPixels[1], band_idx], 2)
+                    top = np.max(rgbArray[unmaskedPixels[0], unmaskedPixels[1], band_idx])
+                elif self.stretch['type'] == 'srange':
+                    bottom = np.min(rgbArray[unmaskedPixels[0], unmaskedPixels[1], band_idx])
+                    top = np.max(rgbArray[unmaskedPixels[0], unmaskedPixels[1], band_idx])
+                elif self.stretch['type'] == 'slinear':
+                    bottom = self.stretch['min'][band_idx]
+                    top = self.stretch['max'][band_idx]
+                else:
+                    bottom = 0.
+                    top = 1.
             else:
-                bottom = 0.
-                top = 1.
+                if self.stretch['type'] == 's2pct':
+                    bottom = np.percentile(rgbArray[:, :, band_idx], 2)
+                    top = np.percentile(rgbArray[:, :, band_idx], 99)
+                elif self.stretch['type'] == 's2pctDrk':
+                    bottom = np.percentile(rgbArray[:, :, band_idx], 2)
+                    top = np.max(rgbArray[:, :, band_idx])
+                elif self.stretch['type'] == 'srange':
+                    bottom = np.min(rgbArray[:, :, band_idx])
+                    top = np.max(rgbArray[:, :, band_idx])
+                elif self.stretch['type'] == 'slinear':
+                    bottom = self.stretch['min'][band_idx]
+                    top = self.stretch['max'][band_idx]
+                else:
+                    bottom = 0.
+                    top = 1.
 
             self.stretch['min'][band_idx] = bottom
             self.stretch['max'][band_idx] = top

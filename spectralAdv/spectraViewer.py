@@ -587,7 +587,7 @@ class specPlot(MyMainWindow):
     setImageDisplayBand = pyqtSignal(int)
 
     def __init__(self, settings=None, x=None, y=None, parent=None, wl=None, vals=None, offset=0,
-                 image_type=None):
+                 marker=None, image_type=None):
         super(specPlot, self).__init__(parent)
         self.setWindowTitle("Spectral Viewer")
         self.resized.connect(self.replot_tight)
@@ -652,7 +652,7 @@ class specPlot(MyMainWindow):
             print('row: ' + str(y) + ', col: ' + str(x))
             #for v in vals: print(v)
             print(vals[0])
-            self.subplot.plot(wl, vals, label='row: ' + str(y) + ', col: ' + str(x), linewidth=1)
+            self.subplot.plot(wl, vals, label='row: ' + str(y) + ', col: ' + str(x), marker=marker, linewidth=1)
             self.addGainOffset('row: ' + str(y) + ', col: ' + str(x))
         except:
             pass
@@ -863,6 +863,7 @@ class specPlot(MyMainWindow):
                 self.subplot.plot(pasted_spectrum_Line2D._x,pasted_spectrum_Line2D._y,
                                   color = pasted_spectrum_Line2D._color,
                                   label = pasted_spectrum_Line2D._label,
+                                  marker = pasted_spectrum_Line2D._marker,
                                   linestyle = pasted_spectrum_Line2D._linestyle,
                                   linewidth = pasted_spectrum_Line2D._linewidth)
                 self.addGainOffset(pasted_spectrum_Line2D._label)

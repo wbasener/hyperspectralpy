@@ -1,6 +1,9 @@
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt 
+import rasterio as rio
+import rasterio
+from rasterio.plot import show
+import matplotlib.pyplot as plt
 import matplotlib
 from mpl_toolkits.mplot3d import Axes3D
 import random
@@ -168,6 +171,14 @@ def apply_bbl(im):
         except:
             pass
     return im
+
+def is_tiff_image_file(im_fname):
+    try:
+        # try to open as tiff file
+        Im = rasterio.open(im_fname)
+        return im_fname, True
+    except:
+        return im_fname, False
 
 def is_image_file(im_fname):
     try:

@@ -1,1 +1,1 @@
-import hyperspectral
+import hyperspectralpy

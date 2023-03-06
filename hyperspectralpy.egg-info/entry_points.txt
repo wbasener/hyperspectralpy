@@ -1,3 +1,2 @@
 [console_scripts]
 go = hyperspectralpy:menu
-
