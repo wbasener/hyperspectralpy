@@ -4,6 +4,8 @@ import sys
 import pickle
 import numpy as np
 from math import *
+
+from PyQt5 import QtWidgets
 from spectral import *
 from . import spectraViewer
 from spectralAdv import specTools
@@ -34,7 +36,7 @@ class MyMainWindow(QMainWindow):
     resized = pyqtSignal()
     def resizeEvent(self, event):
         self.resized.emit()
-        QtGui.QMainWindow.resizeEvent(self, event)
+        QtWidgets.QMainWindow.resizeEvent(self, event)
 
 class TableWidgetItem(QTableWidgetItem):
     def __lt__(self, other):
@@ -500,9 +502,11 @@ class materialIdentificationViewer(MyMainWindow):
                 fname_image = QFileDialog.getOpenFileName(self, "Choose an image")
         if fname_image == '':
             return
-        fname_image_orig = fname_image
-        fname_image, ok = specTools.is_image_file(fname_image)
+        fname_image_orig = fname_image[0]
+        fname_image, ok = specTools.is_image_file(fname_image_orig)
         if not ok:
+            print(fname_image[0])
+            print(fname_image[1])
             QMessageBox.warning(self,"File is not valid ENVI image",
                 "File Name: %s"%(os.path.basename(fname_image)))
 

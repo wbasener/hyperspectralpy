@@ -71,7 +71,7 @@ class MergeOptionsDlg(QDialog):
 
 class libraryManager(QMainWindow):
     # setup signal to send dictionary back to main menu bar
-    library_changed = Signal(dict)
+    library_changed = pyqtSignal(dict)
     openedLibraryInManager = pyqtSignal(dict)
 
     def __init__(self, parent=None, settings=None):
@@ -111,7 +111,7 @@ class libraryManager(QMainWindow):
         self.table_view.setHorizontalHeaderLabels(['Num Spectra','Num Bands','Scale','Wavelengths','Range: min-max','Directory'])
         self.table_view.setColumnHidden(6, True)
         self.table_view.horizontalHeader().setStretchLastSection(True) # stretch last column
-        self.table_view.horizontalHeader().setResizeMode(QHeaderView.ResizeToContents)
+        self.table_view.horizontalHeader().ResizeMode(QHeaderView.ResizeToContents)
         self.table_view.verticalHeader().setAlternatingRowColors(True)
         self.table_view.doubleClicked.connect(self.cell_was_double_clicked)
         self.table_view.verticalHeader().sectionClicked.connect(self.vertical_header_was_clicked)

@@ -220,17 +220,17 @@ class MyWindow(QMainWindow):
         # self.table_view.resizeColumnsToContents()
         if len(self.header_labels) < 8:
             header = self.table_view.horizontalHeader()
-            header.setResizeMode(0, QHeaderView.Stretch)
-            header.setResizeMode(0, QHeaderView.Interactive)
+            header.ResizeMode(0, QHeaderView.Stretch)
+            header.ResizeMode(0, QHeaderView.Interactive)
             for i in range(1,len(self.header_labels)):
-                header.setResizeMode(i, QHeaderView.ResizeToContents)
+                header.ResizeMode(i, QHeaderView.ResizeToContents)
             self.table_view.setColumnWidth(0, 800)
             self.table_view.wordWrap()
         else:
             header = self.table_view.horizontalHeader()
-            header.setResizeMode(0, QHeaderView.Interactive)
+            header.ResizeMode(0, QHeaderView.Interactive)
             for i in range(1,len(self.header_labels)):
-                header.setResizeMode(i, QHeaderView.ResizeToContents)
+                header.ResizeMode(i, QHeaderView.ResizeToContents)
             self.table_view.setColumnWidth(0, 800)
             self.table_view.wordWrap()
         # enable sorting

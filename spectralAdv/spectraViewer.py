@@ -219,7 +219,7 @@ class editDataDlg(QDialog):
         self.table_view.setRowCount(nRows)
         self.table_view.setColumnCount(nCols)
         self.table_view.setHorizontalHeaderLabels(['Width', 'Color', 'Name'])
-        self.table_view.horizontalHeader().setResizeMode(QHeaderView.ResizeToContents)
+        self.table_view.horizontalHeader().ResizeMode(QHeaderView.ResizeToContents)
         self.table_view.horizontalHeader().setStretchLastSection(True)  # stretch last column
         self.table_view.verticalHeader().hide()
         self.fill_table()
@@ -307,10 +307,10 @@ class editDataDlg(QDialog):
     def data_changed(self):
         i = 0
         for line in self.lines:
-            # get the line width from teh table
+            # get the line width from the table
             line._linewidth = self.table_view.cellWidget(i,0).value()
             # get the line color from the table
-            color = self.table_view.item(i, 1).backgroundColor()
+            color = self.table_view.item(i, 1).background().color()
             line._color = '#%02x%02x%02x' % (color.red(),color.green(),color.blue())
             # get the label from the table
             line._label = self.table_view.item(i, 2).text()
@@ -334,7 +334,7 @@ class copySomeDlg(QDialog):
         self.table_view.setRowCount(nRows)
         self.table_view.setColumnCount(nCols)
         self.table_view.setHorizontalHeaderLabels(['Spectra Names'])
-        self.table_view.horizontalHeader().setResizeMode(QHeaderView.ResizeToContents)
+        self.table_view.horizontalHeader().ResizeMode(QHeaderView.ResizeToContents)
         self.table_view.horizontalHeader().setStretchLastSection(True)  # stretch last column
         self.table_view.verticalHeader().hide()
         self.table_view.horizontalHeader().hide()
@@ -649,9 +649,10 @@ class specPlot(MyMainWindow):
             self.MPWidget = MatplotlibWidget()
         self.subplot = self.MPWidget.getFigure().add_subplot(111)
         try:
-            print('row: ' + str(y) + ', col: ' + str(x))
+            #print('row: ' + str(y) + ', col: ' + str(x))
             #for v in vals: print(v)
-            print(vals[0])
+            #print(vals[0])
+            #print(marker)
             self.subplot.plot(wl, vals, label='row: ' + str(y) + ', col: ' + str(x), marker=marker, linewidth=1)
             self.addGainOffset('row: ' + str(y) + ', col: ' + str(x))
         except:

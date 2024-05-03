@@ -2,6 +2,9 @@ from __future__ import division
 import time
 import sys
 import os
+
+from PyQt5 import QtGui
+
 from . import specTools
 from math import *
 import matplotlib
@@ -13,6 +16,7 @@ import pandas as pd
 from scipy.optimize import nnls
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
+from PyQt5 import *
 from PyQt5.QtWidgets import *
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
@@ -25,10 +29,10 @@ from pyqtgraph.widgets.MatplotlibWidget import *
 
 class libraryViewer(QMainWindow):
     # setup signal to send copied spectrum back
-    copiedSpectrum = Signal(dict)
-    pasteSpectrumRequest = Signal(int)
-    pasteSpectrum = Signal(dict)
-    openedLibrary = Signal(dict)
+    copiedSpectrum = pyqtSignal(dict)
+    pasteSpectrumRequest = pyqtSignal(int)
+    pasteSpectrum = pyqtSignal(dict)
+    openedLibrary = pyqtSignal(dict)
 
     def __init__(self, settings=None, libraryDir=None, lib=None, parent=None):
         super(libraryViewer, self).__init__(parent)
@@ -133,9 +137,9 @@ class libraryViewer(QMainWindow):
 
         # put the spectra names in the rows
         for row_idx in range(len(self.lib.names)):
-            self.table_view.setItem(row_idx, 0, QtGui.QTableWidgetItem(self.lib.names[row_idx]))
-            self.table_view.setItem(row_idx, 1, QtGui.QTableWidgetItem('%d' % row_idx))
-            self.table_view.setItem(row_idx, 2, QtGui.QTableWidgetItem('%d' % 0))
+            self.table_view.setItem(row_idx, 0, QtWidgets.QTableWidgetItem(self.lib.names[row_idx]))
+            self.table_view.setItem(row_idx, 1, QtWidgets.QTableWidgetItem('%d' % row_idx))
+            self.table_view.setItem(row_idx, 2, QtWidgets.QTableWidgetItem('%d' % 0))
 
         # resize to fit the new contents
         self.table_view.resizeRowsToContents()

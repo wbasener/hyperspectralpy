@@ -99,10 +99,10 @@ class MenuBar(QMainWindow):
         fileMenu.addAction(spectralContrastViewerAction)
         fileMenu.addAction(confuserFinderAction)
         fileMenu.addAction(libraryBuilderAction)
-        fileMenu = mainMenu.addMenu("Material &Identification ")
-        fileMenu.addAction(materialIdentificationAction)
-        fileMenu = mainMenu.addMenu("&Microscene ")
-        fileMenu.addAction(batchImageComparisonAction)
+        #fileMenu = mainMenu.addMenu("Material &Identification ")
+        #fileMenu.addAction(materialIdentificationAction)
+        #fileMenu = mainMenu.addMenu("&Microscene ")
+        #fileMenu.addAction(batchImageComparisonAction)
 
         self.show()
 
@@ -285,7 +285,7 @@ class MenuBar(QMainWindow):
             self.spectral_library_viewer(lib)
 
     def spectral_library_viewer(self,lib):
-        try:
+        #try:
             self.libraryViewer = libraryViewer.libraryViewer(parent=self,
                                                              settings=self.settings,
                                                              libraryDir=self.libraryDir,
@@ -295,9 +295,9 @@ class MenuBar(QMainWindow):
             self.libraryViewer.pasteSpectrumRequest.connect(self.paste_spectrum_request)
             self.pasteSpectrum.connect(self.libraryViewer.paste_spectrum)
             self.libraryViewer.show()
-        except:
-            QMessageBox.warning(self,"Warning",
-                "Error with spectral library viewer.")
+        #except:
+        #    QMessageBox.warning(self,"Warning",
+        #        "Error with spectral library viewer.")
 
     def opened_library_in_viewer(self, lib_dict):
         lib = lib_dict['lib']# unpack from the dictionary

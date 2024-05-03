@@ -116,7 +116,7 @@ class MyTableWidget(QWidget):
                 for c in range(self.numClasses):
                     val = parent.validation[learnerMethod]['confusionMatrix'][r,c]
                     item = QTableWidgetItem(str(val))
-                    item.setBackground(QColor(val*255, 255-val*255, 0))
+                    item.setBackground(QColor(int(val*255), int(255-val*255), 0))
                     table_learner.setItem(r, c, item)
             for c in range(self.numClasses):
                 table_learner.horizontalHeader().setSectionResizeMode(c, QHeaderView.ResizeToContents)

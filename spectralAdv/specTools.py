@@ -190,8 +190,9 @@ def is_image_file(im_fname):
             # sometimes images are saved with ".img" or similar suffix that must be removed from header
             # this will also enable opening an image of the sued selects the header file
             im_fname_nosuffix = im_fname[:im_fname.rfind(".")]
-            im = envi.open(im_fname_nosuffix+'.hdr', im_fname)
-            return im_fname_nosuffix, True
+            im_fname_hdr = im_fname_nosuffix+'.hdr'
+            im = envi.open(im_fname_hdr, im_fname)
+            return im_fname, True
     except:
         return im_fname, False
 

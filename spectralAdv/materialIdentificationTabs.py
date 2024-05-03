@@ -5,6 +5,8 @@ import sys
 import pickle
 import numpy as np
 from math import *
+
+from PyQt5 import QtGui, QtWidgets
 from spectral import *
 from . import spectraViewer
 from spectralAdv import specTools
@@ -46,7 +48,7 @@ def tab_data_content(self):
     self.table_view.setHorizontalHeaderLabels(['WL Scale Factor', 'Y Scale Factor','Num Spectra','Num Bands','Scale','Wavelengths','Range: min-max','Directory'])
     self.table_view.setColumnHidden(8, True)
     self.table_view.horizontalHeader().setStretchLastSection(True) # stretch last column
-    self.table_view.horizontalHeader().setResizeMode(QHeaderView.ResizeToContents)
+    self.table_view.horizontalHeader().ResizeMode(QHeaderView.ResizeToContents)
     self.table_view.verticalHeader().setAlternatingRowColors(True)
     self.populate_table()
 
@@ -216,7 +218,8 @@ def tab_material_id_content(self):
     nRows = 0
     self.material_id_results_table.setRowCount(nRows)
     self.material_id_results_table.setColumnCount(nCols)
-    self.material_id_results_table.setHorizontalHeaderLabels(['Name','Probability','ACE','Subpixel Spectral Fit','Full Pixel Correlation','Abundnace','Library','Spectrum Index','Text Match Score'])
+    labels = ['Name','Probability','ACE','Subpixel Spectral Fit','Full Pixel Correlation','Abundance','Library','Spectrum Index','Text Match Score']
+    self.material_id_results_table.setHorizontalHeaderLabels(labels)
 
     self.material_id_results_table.horizontalHeader().setStretchLastSection(True) # stretch last column
     #self.material_id_results_table.horizontalHeader().setResizeMode(QHeaderView.ResizeToContents)
@@ -225,8 +228,9 @@ def tab_material_id_content(self):
     self.material_id_results_table.verticalHeader().hide()
     self.material_id_results_table.setColumnHidden(7, True)
     self.material_id_results_table.setColumnHidden(8, True)
-    for i in  range(1,6):
-        self.material_id_results_table.horizontalHeader().setResizeMode(i, QtGui.QHeaderView.ResizeToContents)
+    self.material_id_results_table.horizontalHeader().ResizeMode(QtWidgets.QHeaderView.ResizeToContents)
+    #for i in range(1,6):
+    #    self.material_id_results_table.horizontalHeader().ResizeMode(i, QtWidgets.QHeaderView.ResizeToContents)
     self.material_id_results_table.horizontalHeader().setDefaultSectionSize(50)
     # signal for selection changed
     self.material_id_results_table.itemSelectionChanged.connect(self.selection_changed)
@@ -319,7 +323,7 @@ def tab_feature_match_content(self):
     self.cid = self.MPWidget_feature_match.getFigure().canvas.mpl_connect('motion_notify_event', self.onMouseMove_fm)
     self.cid = self.MPWidget_feature_match.getFigure().canvas.mpl_connect('axes_enter_event', self.event_update_feature_match_plot)
     self.cid = self.MPWidget_feature_match.getFigure().canvas.mpl_connect('axes_enter_event', self.event_enter_feature_match_plot)
-    self.cid = self.MPWidget_feature_match.getFigure().canvas.mpl_connect('axes_exit_event', self.event_exit_feature_match_plot)
+    self.cid = self.MPWidget_feature_match.getFigure().canvas.mpl_connect('axes_leave_event', self.event_exit_feature_match_plot)
     self.cid = self.MPWidget_feature_match.getFigure().canvas.mpl_connect('resize_event', self.event_update_feature_match_plot)
     #self.cid = self.MPWidget_feature_match.getFigure().canvas.mpl_connect('pick_event', self.onpick_fm)
 
@@ -340,8 +344,9 @@ def tab_feature_match_content(self):
     self.feature_match_results_table.verticalHeader().hide()
     self.feature_match_results_table.setColumnHidden(7, True)
     self.feature_match_results_table.setColumnHidden(8, True)
-    for i in  range(1,6):
-        self.feature_match_results_table.horizontalHeader().setResizeMode(i, QtGui.QHeaderView.ResizeToContents)
+    self.feature_match_results_table.horizontalHeader().ResizeMode(QtWidgets.QHeaderView.ResizeToContents)
+    #for i in  range(1,6):
+    #    self.feature_match_results_table.horizontalHeader().ResizeMode(i, QtGui.QHeaderView.ResizeToContents)
     self.feature_match_results_table.horizontalHeader().setDefaultSectionSize(50)
     # signal for selection changed
     self.feature_match_results_table.itemSelectionChanged.connect(self.selection_changed_fm)

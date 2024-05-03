@@ -206,7 +206,7 @@ def single_material_identificaiton(self):
     for idx in range(nSpectra):
         endemembers_this_lib = endmembers
         endemembers_this_lib_full_wl = endmembers_full_wl
-        self.progressBar.setValue(30 + 70*idx/nSpectra)
+        self.progressBar.setValue(int(30 + 70*idx/nSpectra))
         lib_spectrum = lib_spectra[idx,]
         lib_spectrum_full_wl = lib_spectra_full_wl[idx,] # full wl for plots
         likelihood_sum = 0

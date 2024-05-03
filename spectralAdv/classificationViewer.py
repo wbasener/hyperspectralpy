@@ -273,7 +273,7 @@ class classAnalysisGUI(QMainWindow):
             name.setData(Qt.UserRole,QColor(100,130,155))  # sets the highlight color
             self.table_view.setItem(idx, 0, name)
             # color item
-            c = self.ROIdata[key].color
+            c = self.ROIdata[key].color.astype(int)
             blank = QTableWidgetItem()
             blank.setFlags(blank.flags() & ~Qt.ItemIsEditable)
             blank.setBackground(QColor(c[0], c[1], c[2]))
@@ -386,8 +386,9 @@ class classAnalysisGUI(QMainWindow):
         # check the bands
         band_check = True
         if nBands == len(self.wl):
-            if not (self.im.bands.centers == self.wl).all():
-                band_check = False
+            #if not (self.im.bands.centers == self.wl).all():
+            #    band_check = False
+            pass
         else:
             band_check = False
         if band_check == False:

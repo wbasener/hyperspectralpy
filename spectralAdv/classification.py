@@ -66,7 +66,11 @@ def compute_accuracy(y_pred,y_test):
 
 def compute_lda_seperation(lda, ROIdata):
     cov = lda
-    icov = np.linalg.inv(cov)
+    try:
+        icov = np.linalg.inv(cov)
+    except:
+        print('Singular Matrix - Using PseudoInverse.')
+        icov = np.linalg.pinv(cov)
 
     names = list(ROIdata.keys())
     spectra = ROIdata[names[0]].spectra
@@ -94,7 +98,7 @@ def ROI_class_learner(ROIdata, wl, methods):
 
     # do the classification
     if 'LDA' in methods:
-        lda = LinearDiscriminantAnalysis(solver="svd", store_covariance=True, tol = 10^-3)
+        lda = LinearDiscriminantAnalysis(solver="svd", store_covariance=True, tol = 10**-3)
         y_pred = lda.fit(X_train, y_train).predict(X_test)
         accuracy, confusionMatrix = compute_accuracy(y_pred,y_test)
         learners['LDA'] = lda.fit(X, y)

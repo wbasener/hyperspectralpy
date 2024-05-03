@@ -895,7 +895,7 @@ class imageViewer(QMainWindow):
                     # This is the case if not spectral plot has been made
                     self.spectral_plot = spectraViewer.specPlot(parent=self, settings=self.settings, x=x, y=y,
                         wl=self.wl,
-                        marker='o',
+                        marker=None,
                         vals=self.im_arr[y,x,:].flatten(),
                         offset=self.spectral_plot_offset,
                         image_type=self.image_type)
@@ -909,7 +909,7 @@ class imageViewer(QMainWindow):
                     # This is the case if a spectral plot was made and then closed
                     self.spectral_plot = spectraViewer.specPlot(parent=self, settings=self.settings, x=x, y=y,
                         wl=self.wl,
-                        marker='o',
+                        marker=None,
                         vals=self.im_arr[y,x,:].flatten(),
                         offset=self.spectral_plot_offset,
                         image_type=self.image_type)
@@ -921,7 +921,7 @@ class imageViewer(QMainWindow):
                 else:
                     # This is the case if a spectral plot is made and still open
                     # generate the plot
-                    self.spectral_plot.subplot.plot(self.wl,self.im_arr[y,x,:].flatten(), label='row: '+str(y)+', col: '+str(x), marker='o', linewidth=1)
+                    self.spectral_plot.subplot.plot(self.wl,self.im_arr[y,x,:].flatten(), label='row: '+str(y)+', col: '+str(x), marker=None, linewidth=1)
                     self.spectral_plot.addGainOffset('row: '+str(y)+', col: '+str(x))
                     if self.settings.screen_width > 3000:
                         self.spectral_plot.subplot.axes.legend(fontsize=20)
@@ -937,31 +937,31 @@ class imageViewer(QMainWindow):
         self.ROI_colors.append(self.current_color)
         self.ROI_Id_nums.append(self.current_ROI_Id_num)
 
-        print("count...")
-        # determine pixels inside this polygon
-        p = Path(self.polygonIm_points)  # make a polygon
-        grid = p.contains_points(self.points_vstack)  # determine the points (coordinates listed in vstack) inside this polygon
-        # This is how you make a 2d mask from the grid: mask = grid.reshape(self.im.ncols, self.im.nrows)
-        # add these pixel locations to the set of all locations for this ROI
-        self.ROI_im_dict[self.current_ROI_Id_num.text()] = self.ROI_im_dict[self.current_ROI_Id_num.text()]+grid
-        # set the number of points for this ROI
-        item = self.ROI_table.selectedItems()[0]
-        row = item.row()
-        self.ROI_table.setItem(row, 2, QTableWidgetItem(str(np.sum(self.ROI_im_dict[self.current_ROI_Id_num.text()]))))
+        if len(self.polygonIm_points) > 1:
+            # determine pixels inside this polygon
+            p = Path(self.polygonIm_points)  # make a polygon
+            grid = p.contains_points(self.points_vstack)  # determine the points (coordinates listed in vstack) inside this polygon
+            # This is how you make a 2d mask from the grid: mask = grid.reshape(self.im.ncols, self.im.nrows)
+            # add these pixel locations to the set of all locations for this ROI
+            self.ROI_im_dict[self.current_ROI_Id_num.text()] = self.ROI_im_dict[self.current_ROI_Id_num.text()]+grid
+            # set the number of points for this ROI
+            item = self.ROI_table.selectedItems()[0]
+            row = item.row()
+            self.ROI_table.setItem(row, 2, QTableWidgetItem(str(np.sum(self.ROI_im_dict[self.current_ROI_Id_num.text()]))))
 
-        # Reset current polygon
-        self.polygon = QPolygonF()
-        self.polygon_points = []
-        self.polygonIm = QPolygon()
-        self.polygonIm_points = []
-        # Make the ROI table active (selectable) again
-        self.make_ROI_table_selectable()
-        self.draw_polygons()
+            # Reset current polygon
+            self.polygon = QPolygonF()
+            self.polygon_points = []
+            self.polygonIm = QPolygon()
+            self.polygonIm_points = []
+            # Make the ROI table active (selectable) again
+            self.make_ROI_table_selectable()
+            self.draw_polygons()
 
     def draw_polygons(self):
         if self.btn_ROIs.isChecked():
-            self.pm = QPixmap.fromImage(self.qi).scaled(self.scale * self.rgb_arr.shape[1],
-                                                        self.scale * self.rgb_arr.shape[0])
+            self.pm = QPixmap.fromImage(self.qi).scaled(int(self.scale * self.rgb_arr.shape[1]),
+                                                        int(self.scale * self.rgb_arr.shape[0]))
             painter = QPainter()
             painter.begin(self.pm)
             for (polygon,color) in zip(self.ROI_polygons, self.ROI_colors):
@@ -974,13 +974,13 @@ class imageViewer(QMainWindow):
                 # these are the x,y - coords in pixel space in the QPixmap
                 x_pm = (int(floor(p[0] / self.scale)) + 0.5) * self.scale
                 y_pm = (int(floor(p[1] / self.scale)) + 0.5) * self.scale
-                painter.drawRect(x_pm-0.5*self.scale, y_pm-0.5*self.scale, self.scale, self.scale)
+                painter.drawRect(int(x_pm-0.5*self.scale), int(y_pm-0.5*self.scale), int(self.scale), int(self.scale))
             for idx in range(len(self.polygon_points)-1):
                 x1_pm = (int(floor(self.polygon_points[idx][0] / self.scale)) + 0.5) * self.scale
                 y1_pm = (int(floor(self.polygon_points[idx][1] / self.scale)) + 0.5) * self.scale
                 x2_pm = (int(floor(self.polygon_points[idx+1][0] / self.scale)) + 0.5) * self.scale
                 y2_pm = (int(floor(self.polygon_points[idx+1][1] / self.scale)) + 0.5) * self.scale
-                painter.drawLine(x1_pm, y1_pm, x2_pm, y2_pm)
+                painter.drawLine(int(x1_pm), int(y1_pm), int(x2_pm), int(y2_pm))
             self.imageLabel.setPixmap(self.pm)
             painter.end()
         else:
@@ -988,8 +988,8 @@ class imageViewer(QMainWindow):
 
     def draw_polygon_line(self):
         # paint the polygon:
-        self.pm = QPixmap.fromImage(self.qi).scaled(self.scale * self.rgb_arr.shape[1],
-                                                    self.scale * self.rgb_arr.shape[0])
+        self.pm = QPixmap.fromImage(self.qi).scaled(int(self.scale * self.rgb_arr.shape[1]),
+                                                    int(self.scale * self.rgb_arr.shape[0]))
         painter = QPainter()
         painter.begin(self.pm)
         try:
@@ -1005,14 +1005,14 @@ class imageViewer(QMainWindow):
         painter.setPen(QPen(self.current_color))
         for p in self.polygon_points:
             # these are the x,y - coords in pixel space in the QPixmap
-            x_pm = (int(floor(p[0] / self.scale)) + 0.5) * self.scale
-            y_pm = (int(floor(p[1] / self.scale)) + 0.5) * self.scale
-            painter.drawRect(x_pm-0.5*self.scale, y_pm-0.5*self.scale, self.scale, self.scale)
+            x_pm = int(((floor(p[0] / self.scale)) + 0.5) * self.scale)
+            y_pm = int(((floor(p[1] / self.scale)) + 0.5) * self.scale)
+            painter.drawRect(int(x_pm-0.5*self.scale), int(y_pm-0.5*self.scale), 1, 1, )#self.scale, self.scale)
         for idx in range(len(self.polygon_points)-1):
-            x1_pm = (int(floor(self.polygon_points[idx][0] / self.scale)) + 0.5) * self.scale
-            y1_pm = (int(floor(self.polygon_points[idx][1] / self.scale)) + 0.5) * self.scale
-            x2_pm = (int(floor(self.polygon_points[idx+1][0] / self.scale)) + 0.5) * self.scale
-            y2_pm = (int(floor(self.polygon_points[idx+1][1] / self.scale)) + 0.5) * self.scale
+            x1_pm = int(((floor(self.polygon_points[idx][0] / self.scale)) + 0.5) * self.scale)
+            y1_pm = int(((floor(self.polygon_points[idx][1] / self.scale)) + 0.5) * self.scale)
+            x2_pm = int(((floor(self.polygon_points[idx+1][0] / self.scale)) + 0.5) * self.scale)
+            y2_pm = int(((floor(self.polygon_points[idx+1][1] / self.scale)) + 0.5) * self.scale)
             painter.drawLine(x1_pm, y1_pm, x2_pm, y2_pm)
         # draw polygons
         for (polygon,color) in zip(self.ROI_polygons, self.ROI_colors):

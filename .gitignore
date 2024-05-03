@@ -1,2 +1,5 @@
 *.gz
+*.pyc
 dist/*
+.idea/*
+_pycache_/*
