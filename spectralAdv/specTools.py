@@ -244,7 +244,7 @@ def load_and_resample_library(fname_lib,im,im_arr,verbose, rescale_x=True, resca
                     print('WARNING: Converting library from nanometers to microns.')
         else:
             # image units are nanometers
-            if np.mean(im.bands.centers) < 100:
+            if np.mean(lib.bands.centers) < 100:
                 wl_scale = 1000.
                 if verbose==1:
                     print('WARNING: Converting library from microns to nanometers.')
@@ -287,7 +287,7 @@ def resample_library(lib,im,im_arr,verbose, rescale_x=True, rescale_y=True):
                     print('WARNING: Converting library from nanometers to microns.')
         else:
             # image units are nanometers
-            if np.mean(im.bands.centers) < 100:
+            if np.mean(lib.bands.centers) < 100:
                 wl_scale = 1000.
                 if verbose==1:
                     print('WARNING: Converting library from microns to nanometers.')
