@@ -24,7 +24,7 @@ setup(
     url='https://github.com/wbasener/hyperspectralpy',
     author='Bill Basener',
     author_email='wb8by@virginia.edu',
-    packages=find_packages(),
+    packages=['hyperspectralpy'],
     install_requires=[
         'numpy',
         'matplotlib',
@@ -44,7 +44,7 @@ setup(
         'scikit_learn',
         'setuptools',
         'PyYAML',
-        'plotly'
+        'plotly',
     ],
 
     #extras_require={
