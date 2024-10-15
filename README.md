@@ -6,6 +6,11 @@ Demo on YouTube at: https://youtube.com/playlist?list=PLzUi-TW1M9mrxAZGKlCwsFzHD
 ![](https://github.com/wbasener/HySpec/blob/main/spectralAdv/Screenshot_HySpec.png?raw=true)
 
 
-to install:
-Create a venv environment, then run the following from the terminal:
-    pip install -r requirements.txt
+To install:
+
+From your terminal:
+    > pip install hyperspectralpy
+Then (to install all the required packages, if needed):
+    > pip install -r requirements.txt
+Then run setup.py, for example from the terminal:
+    > Python setup.py
