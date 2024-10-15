@@ -4,3 +4,8 @@ Python tools with a GUI for visualization and analysis (target detection, PCA, m
 Demo on YouTube at: https://youtube.com/playlist?list=PLzUi-TW1M9mrxAZGKlCwsFzHDv4y3030B
 
 ![](https://github.com/wbasener/HySpec/blob/main/spectralAdv/Screenshot_HySpec.png?raw=true)
+
+
+to install:
+Create a venv environment, then run the following from the terminal:
+    pip install -r requirements.txt

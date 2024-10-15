@@ -52,8 +52,8 @@ class scatterplot2DViewer(QMainWindow):
         for b in self.bnames:
             w = max([w, 1.2 * fm.width(b)])
         # set the max width on the band names list widgets
-        self.bnames_x.setMaximumWidth(w)
-        self.bnames_y.setMaximumWidth(w)
+        self.bnames_x.setMaximumWidth(int(w))
+        self.bnames_y.setMaximumWidth(int(w))
 
         # create layout
         self.hbox = QHBoxLayout()

@@ -10,11 +10,11 @@ data type = 2
 interleave = bil
 sensor type = Unknown
 byte order = 0
-x start = 215
-y start = 295
+x start = 0
+y start = 0
 default bands = {12,22,36}
 wavelength units = Micrometers
-reflectance scale factor = 1000
+reflectance scale factor = 1000.000000
 band names = {
  Band 172, Band 173, Band 174, Band 175, Band 176, Band 177, Band 178, 
  Band 179, Band 180, Band 181, Band 182, Band 183, Band 184, Band 185, 

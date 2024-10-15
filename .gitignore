@@ -3,3 +3,5 @@
 dist/*
 .idea/*
 _pycache_/*
+data/*
+hyperspectralpy/_pycache_/*
